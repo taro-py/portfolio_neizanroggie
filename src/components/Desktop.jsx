@@ -10,25 +10,6 @@ import TrajectoryMap from './apps/TrajectoryMap';
 import { useWindowManager } from '../hooks/useWindowManager';
 
 /**
- * BinaryBackground Component
- * Renders full-screen background block with subtle 010110 random binary strings.
- */
-function BinaryBackground() {
-  const binaryContent =
-    '01011010 01100101 01110010 01101111 00100000 01001111 01010011 00100000 01010011 01011001 01010011 01010100 01000101 01001101 00100000 01010010 01000101 01000001 01000100 01011001 00100000 01001011 01000101 01010010 01001110 01000101 01001100 00100000 01110110 00110010 00101110 00110000 00101110 00110001 00100000 01001110 01000101 01001001 01011010 01000001 01001110 00100000 01010011 01010000 01000001 01001001 01001110 00100000 01010101 01010011 01000001 00100000 01001110 01001111 01010010 01010111 01000001 01011001 00100000 01110010 01100101 01110011 01110101 01101101 01100101 00101110 01100101 01111000 01100101 00100000 01110000 01110010 01101111 01101010 01100101 01100011 01110100 01110011 00101110 01110011 01101000 00100000 01110100 01100101 01110010 01101101 01101001 01101110 01100001 01101100 00101110 01100101 01111000 01100101 00100000 '
-      .repeat(50);
-
-  return (
-    <div
-      aria-hidden="true"
-      className="absolute inset-0 z-0 pointer-events-none font-mono text-white/5 break-all overflow-hidden h-full w-full p-4 text-xs sm:text-sm select-none leading-relaxed"
-    >
-      {binaryContent}
-    </div>
-  );
-}
-
-/**
  * Desktop Component
  * Main viewport container and workspace orchestrator.
  * Renders desktop shortcuts, coordinates open applications, and anchors the Taskbar.
@@ -161,8 +142,11 @@ export default function Desktop() {
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-os text-main flex flex-col justify-between select-none">
-      {/* Full-screen subtle binary matrix veil */}
-      <BinaryBackground />
+      {/* Subtle OS Background Aesthetics (Ambient Grid) */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-30 bg-[linear-gradient(to_right,#151521_1px,transparent_1px),linear-gradient(to_bottom,#151521_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"
+        aria-hidden="true"
+      />
 
       {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) */}
       <div

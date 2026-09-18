@@ -1,12 +1,7 @@
 import { useState, useCallback } from 'react';
 
-// Nuclear Z-Index Solution: Global module-scoped counter completely outside React state
-let globalZIndex = 50;
-
-/**
- * Custom Hook: useWindowManager
- * Manages the multi-window desktop environment state with global monotonic z-index ordering.
- */
+// Custom Hook: useWindowManager
+// Uses zIndex: Date.now() to ensure the latest touched or opened window always has the topmost layer.
 export function useWindowManager() {
   const [windows, setWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
@@ -15,15 +10,12 @@ export function useWindowManager() {
    * Brings a window to the top layer and marks it as active
    */
   const focusWindow = useCallback((id) => {
-    globalZIndex += 1;
-    const nextZ = globalZIndex;
-
     setWindows((prevWindows) =>
       prevWindows.map((win) => {
         if (win.id === id) {
           return {
             ...win,
-            zIndex: nextZ,
+            zIndex: Date.now(),
             isMinimized: false,
           };
         }
@@ -35,18 +27,15 @@ export function useWindowManager() {
 
   /**
    * Opens a window or restores and focuses it if already opened.
-   * Atomically calculates highest zIndex synchronously at injection time via globalZIndex.
+   * Uses zIndex: Date.now() so it always gets the highest timestamp.
    */
   const openWindow = useCallback((config) => {
-    globalZIndex += 1;
-    const nextZIndex = globalZIndex;
-
     setWindows((prevWindows) => {
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
         return prevWindows.map((win) =>
           win.id === config.id
-            ? { ...win, isMinimized: false, zIndex: nextZIndex }
+            ? { ...win, isMinimized: false, zIndex: Date.now() }
             : win
         );
       }
@@ -72,7 +61,7 @@ export function useWindowManager() {
         position: initialPos,
         prevBounds: { size: initialSize, position: initialPos },
         content: config.content || null,
-        zIndex: nextZIndex,
+        zIndex: Date.now(),
       };
 
       return [...prevWindows, newWindow];
@@ -137,9 +126,6 @@ export function useWindowManager() {
    * Toggles maximize/restore state of a window
    */
   const maximizeWindow = useCallback((id) => {
-    globalZIndex += 1;
-    const nextZ = globalZIndex;
-
     setWindows((prev) =>
       prev.map((win) => {
         if (win.id !== id) return win;
@@ -148,7 +134,7 @@ export function useWindowManager() {
           return {
             ...win,
             isMaximized: false,
-            zIndex: nextZ,
+            zIndex: Date.now(),
             size: win.prevBounds.size,
             position: win.prevBounds.position,
           };
@@ -156,7 +142,7 @@ export function useWindowManager() {
           return {
             ...win,
             isMaximized: true,
-            zIndex: nextZ,
+            zIndex: Date.now(),
             prevBounds: {
               size: win.size,
               position: win.position,
