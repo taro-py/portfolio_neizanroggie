@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #09090E;
+    color: #A9B1D6;
+    font-family: 'Inter', sans-serif;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Custom scrollbar for future OS windows */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #09090E;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1f2033;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9D4EDD;
+  }
+
+  ::selection {
+    background-color: rgba(0, 229, 255, 0.25);
+    color: #00E5FF;
+  }
+}
