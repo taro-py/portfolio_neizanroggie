@@ -2,32 +2,33 @@ import { useState, useCallback } from 'react';
 
 /**
  * Custom Hook: useWindowManager
- * Manages the multi-window desktop environment state with stable callbacks.
+ * Manages the multi-window desktop environment state with strictly deterministic, atomic z-index calculation.
  */
 export function useWindowManager() {
   const [windows, setWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
-  const [, setTopZIndex] = useState(20);
 
   /**
    * Brings a window to the top layer and marks it as active
    */
   const focusWindow = useCallback((id) => {
-    setTopZIndex((prevTop) => {
-      const nextTop = prevTop + 1;
-      setWindows((prevWindows) =>
-        prevWindows.map((win) => {
-          if (win.id === id) {
-            return {
-              ...win,
-              zIndex: nextTop,
-              isMinimized: false,
-            };
-          }
-          return win;
-        })
+    setWindows((prevWindows) => {
+      const highestZ = prevWindows.reduce(
+        (max, w) => Math.max(max, w.zIndex || 0),
+        20
       );
-      return nextTop;
+      const nextZ = highestZ + 1;
+
+      return prevWindows.map((win) => {
+        if (win.id === id) {
+          return {
+            ...win,
+            zIndex: nextZ,
+            isMinimized: false,
+          };
+        }
+        return win;
+      });
     });
     setActiveWindowId(id);
   }, []);
@@ -36,13 +37,13 @@ export function useWindowManager() {
    * Opens a window or restores and focuses it if already opened
    */
   const openWindow = useCallback((config) => {
-    let nextZIndex = 21;
-    setTopZIndex((prev) => {
-      nextZIndex = prev + 1;
-      return nextZIndex;
-    });
-
     setWindows((prevWindows) => {
+      const highestZ = prevWindows.reduce(
+        (max, w) => Math.max(max, w.zIndex || 0),
+        20
+      );
+      const nextZIndex = highestZ + 1;
+
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
         return prevWindows.map((win) =>
@@ -138,15 +139,21 @@ export function useWindowManager() {
    * Toggles maximize/restore state of a window
    */
   const maximizeWindow = useCallback((id) => {
-    focusWindow(id);
-    setWindows((prev) =>
-      prev.map((win) => {
+    setWindows((prev) => {
+      const highestZ = prev.reduce(
+        (max, w) => Math.max(max, w.zIndex || 0),
+        20
+      );
+      const nextZ = highestZ + 1;
+
+      return prev.map((win) => {
         if (win.id !== id) return win;
 
         if (win.isMaximized) {
           return {
             ...win,
             isMaximized: false,
+            zIndex: nextZ,
             size: win.prevBounds.size,
             position: win.prevBounds.position,
           };
@@ -154,15 +161,17 @@ export function useWindowManager() {
           return {
             ...win,
             isMaximized: true,
+            zIndex: nextZ,
             prevBounds: {
               size: win.size,
               position: win.position,
             },
           };
         }
-      })
-    );
-  }, [focusWindow]);
+      });
+    });
+    setActiveWindowId(id);
+  }, []);
 
   /**
    * Updates position on drag end

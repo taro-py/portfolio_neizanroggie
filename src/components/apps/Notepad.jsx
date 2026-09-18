@@ -20,7 +20,7 @@ I am an aspiring FULL-STACK Software Engineer with a solid foundation in systems
 [Infrastructure and Networking]
 - Systems: Ubuntu, Kali Linux, Arch Linux, MAC, Windows.
 - Networking: Topology configuration (Cisco), traffic analysis (Wireshark), and remote management (PuTTY).
-- Databases: Database design and management, including complex queries and cursors.
+- Databases: Database design and management, including queries.
 
 [Cybersecurity]
 - Continuous self-taught learning in information security, applying networking and systems concepts to build more robust software, as well as finding vulnerabilities in Linux systems and servers.`;
@@ -46,23 +46,25 @@ I am an aspiring FULL-STACK Software Engineer with a solid foundation in systems
         </button>
       </div>
 
-      {/* Editor Content Area */}
-      <div className="flex-1 p-5 overflow-auto text-xs sm:text-[13px] leading-relaxed text-slate-200 selection:bg-accent-cyan/25 selection:text-accent-cyan">
-        <pre className="font-mono whitespace-pre-wrap break-words">{content}</pre>
+      {/* Editor Content Area (Scrollable & Centered with max-w-4xl) */}
+      <div className="flex-1 overflow-y-auto w-full p-4 sm:p-8 selection:bg-accent-cyan/25 selection:text-accent-cyan">
+        <div className="max-w-4xl mx-auto w-full flex flex-col">
+          <pre className="font-mono whitespace-pre-wrap break-words leading-relaxed text-slate-200 text-xs sm:text-[13px]">{content}</pre>
 
-        {/* Interactive Glowing Resume Button */}
-        <div className="mt-8 pt-6 border-t border-white/10 select-none">
-          <p className="text-[11px] text-text-main/60 mb-2 font-mono">
-            // Execute command to inspect verified credentials:
-          </p>
-          <button
-            type="button"
-            onClick={onOpenResume}
-            className="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded bg-accent-cyan/10 border-2 border-accent-cyan text-accent-cyan font-mono text-xs sm:text-sm font-bold tracking-wider hover:bg-accent-cyan hover:text-black hover:shadow-[0_0_25px_rgba(0,229,255,0.6)] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.2)]"
-          >
-            <span className="group-hover:translate-x-0.5 transition-transform">&gt; VIEW_RESUME.exe</span>
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </button>
+          {/* Interactive Glowing Resume Button */}
+          <div className="mt-10 mb-8 pt-6 border-t border-white/10 select-none">
+            <p className="text-[11px] text-text-main/60 mb-2.5 font-mono">
+              // Execute command to inspect verified credentials:
+            </p>
+            <button
+              type="button"
+              onClick={onOpenResume}
+              className="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded bg-accent-cyan/10 border-2 border-accent-cyan text-accent-cyan font-mono text-xs sm:text-sm font-bold tracking-wider hover:bg-accent-cyan hover:text-black hover:shadow-[0_0_25px_rgba(0,229,255,0.6)] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.2)]"
+            >
+              <span className="group-hover:translate-x-0.5 transition-transform">&gt; VIEW_RESUME.exe</span>
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
+          </div>
         </div>
       </div>
 

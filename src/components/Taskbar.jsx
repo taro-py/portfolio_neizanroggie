@@ -1,10 +1,11 @@
-import { Terminal, Folder, FileText, Wifi, Volume2, ShieldCheck } from 'lucide-react';
+import { Terminal, Folder, FileText, Compass, Wifi, ShieldCheck } from 'lucide-react';
 import Clock from './Clock';
 
 const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
   'file-text': FileText,
+  map: Compass,
 };
 
 /**
@@ -33,7 +34,7 @@ export default function Taskbar({
             TERMINAL
           </span>
           <span className="font-mono text-[10px] px-1 py-0.5 rounded bg-accent-purple/20 text-accent-purple border border-accent-purple/30">
-            v1.0
+            v2.0.1
           </span>
         </button>
 
@@ -95,13 +96,6 @@ export default function Taskbar({
             title="Active network connection"
           >
             <Wifi className="w-3.5 h-3.5" />
-          </button>
-          <button
-            type="button"
-            className="p-1.5 rounded hover:bg-white/5 hover:text-text-main transition-colors"
-            title="System audio"
-          >
-            <Volume2 className="w-3.5 h-3.5" />
           </button>
         </div>
 

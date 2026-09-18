@@ -5,6 +5,8 @@ import DesktopIcon from './DesktopIcon';
 import Notepad from './apps/Notepad';
 import Terminal from './apps/Terminal';
 import ResumeViewer from './apps/ResumeViewer';
+import ProjectsExplorer from './apps/ProjectsExplorer';
+import TrajectoryMap from './apps/TrajectoryMap';
 import { useWindowManager } from '../hooks/useWindowManager';
 
 /**
@@ -27,7 +29,7 @@ export default function Desktop() {
 
   const hasAutoStartedRef = useRef(false);
 
-  // Function to open the ResumeViewer application
+  // Function to open the ResumeViewer application with guaranteed top focus
   const handleOpenResume = useCallback(() => {
     openWindow({
       id: 'resume',
@@ -35,7 +37,48 @@ export default function Desktop() {
       icon: 'file-text',
       size: { width: 720, height: 560 },
     });
-  }, [openWindow]);
+    focusWindow('resume');
+  }, [openWindow, focusWindow]);
+
+  // Terminal command bridge to open desktop applications
+  const handleOpenAppByName = useCallback(
+    (name) => {
+      const target = (name || '').toLowerCase().trim();
+      if (target.includes('resume') || target.includes('cv')) {
+        handleOpenResume();
+        return true;
+      } else if (target.includes('about')) {
+        openWindow({
+          id: 'about',
+          title: 'about-me.txt',
+          icon: 'file-text',
+          size: { width: 620, height: 490 },
+        });
+        focusWindow('about');
+        return true;
+      } else if (target.includes('project')) {
+        openWindow({
+          id: 'projects',
+          title: 'Projects',
+          icon: 'folder',
+          size: { width: 780, height: 500 },
+        });
+        focusWindow('projects');
+        return true;
+      } else if (target.includes('map') || target.includes('trajectory')) {
+        openWindow({
+          id: 'map',
+          title: 'Trajectory.map',
+          icon: 'map',
+          size: { width: 760, height: 520 },
+        });
+        focusWindow('map');
+        return true;
+      }
+      return false;
+    },
+    [handleOpenResume, openWindow, focusWindow]
+  );
 
   // Desktop shortcut configurations
   const desktopShortcuts = [
@@ -61,7 +104,13 @@ export default function Desktop() {
       id: 'projects',
       title: 'Projects',
       icon: 'folder',
-      size: { width: 560, height: 380 },
+      size: { width: 780, height: 500 },
+    },
+    {
+      id: 'map',
+      title: 'Trajectory.map',
+      icon: 'map',
+      size: { width: 760, height: 520 },
     },
   ];
 
@@ -126,7 +175,7 @@ export default function Desktop() {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
           <div className="text-center space-y-2 opacity-20 transition-opacity duration-500 hover:opacity-40">
             <p className="font-mono text-xs tracking-[0.3em] uppercase text-text-main">
-              Portfolio OS &bull; Kernel v1.0.0
+              Portfolio OS &bull; Kernel v2.0.1
             </p>
             <h1 className="text-3xl sm:text-4xl font-mono font-bold tracking-tight text-slate-400">
               SYSTEM READY<span className="animate-pulse text-accent-cyan">_</span>
@@ -145,7 +194,11 @@ export default function Desktop() {
           } else if (win.id === 'resume') {
             appContent = <ResumeViewer onClose={() => closeWindow('resume')} />;
           } else if (win.id === 'terminal') {
-            appContent = <Terminal />;
+            appContent = <Terminal onOpenApp={handleOpenAppByName} />;
+          } else if (win.id === 'projects') {
+            appContent = <ProjectsExplorer />;
+          } else if (win.id === 'map') {
+            appContent = <TrajectoryMap />;
           }
 
           return (

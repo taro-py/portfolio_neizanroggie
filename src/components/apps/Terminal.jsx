@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Terminal as TerminalIcon, Sparkles } from 'lucide-react';
 
 const BOOT_LOGS = [
-  { text: 'SYNTH_OS KERNEL [v1.0.0-PROD.x86_64]', delay: 200, color: 'text-text-main' },
+  { text: 'SYNTH_OS KERNEL [v2.0.1-PROD.x86_64]', delay: 200, color: 'text-text-main' },
   { text: 'Copyright (C) 2026 Neizan Roggie. All rights reserved.', delay: 400, color: 'text-text-main/70' },
   { text: '[  OK  ] Initializing CPU microcode & quantum memory...', delay: 700, color: 'text-emerald-400' },
   { text: '[  OK  ] Mounting virtual drive /dev/portfolio_fs...', delay: 1000, color: 'text-emerald-400' },
@@ -13,38 +13,39 @@ const BOOT_LOGS = [
 
 const SKILLS = [
   {
-    name: 'React',
-    desc: 'React 19, Advanced Hooks, Component Architecture, Virtual DOM',
-    tag: 'CORE FRONTEND',
+    name: 'C / C++',
+    desc: 'Core Logic, Data Structures, OOP, Memory Management.',
+    tag: 'SYSTEMS',
     accent: 'text-accent-cyan border-accent-cyan/40 bg-accent-cyan/10',
   },
   {
-    name: 'Tailwind CSS',
-    desc: 'Custom Design Systems, Cyberpunk/Synth Palettes, Responsive UI',
-    tag: 'STYLING',
-    accent: 'text-cyan-400 border-cyan-400/40 bg-cyan-400/10',
+    name: 'Python & AI',
+    desc: 'Algorithms, Agent Development, Data Processing.',
+    tag: 'AI & DATA',
+    accent: 'text-emerald-400 border-emerald-400/40 bg-emerald-400/10',
   },
   {
-    name: 'JavaScript',
-    desc: 'Modern ESNext, Asynchronous Programming, Modularity, Web APIs',
-    tag: 'LANGUAGE',
+    name: 'Java & SQL',
+    desc: 'Backend Architecture, Queries, Relational Databases.',
+    tag: 'BACKEND',
     accent: 'text-amber-400 border-amber-400/40 bg-amber-400/10',
   },
   {
-    name: 'Git',
-    desc: 'Version Control, GitFlow, Branching Workflows, CI/CD Integration',
-    tag: 'WORKFLOW',
+    name: 'Web & Full-Stack',
+    desc: 'JavaScript, Go, React, Tailwind CSS.',
+    tag: 'FULL-STACK',
     accent: 'text-accent-purple border-accent-purple/40 bg-accent-purple/10',
   },
 ];
 
 /**
  * Terminal Component
- * Displays an automated boot sequence and interactive skills list with Synth-OS aesthetics.
+ * Displays an automated boot sequence and comprehensive interactive shell environment.
  */
-export default function Terminal() {
+export default function Terminal({ onOpenApp }) {
   const [displayedLogs, setDisplayedLogs] = useState([]);
   const [bootFinished, setBootFinished] = useState(false);
+  const [currentDir, setCurrentDir] = useState('~');
   const [inputCommand, setInputCommand] = useState('');
   const [commandHistory, setCommandHistory] = useState([]);
   const terminalEndRef = useRef(null);
@@ -78,27 +79,111 @@ export default function Terminal() {
 
   const handleCommandSubmit = (e) => {
     e.preventDefault();
-    const cmd = inputCommand.trim().toLowerCase();
-    if (!cmd) return;
+    const rawInput = inputCommand.trim();
+    if (!rawInput) return;
+
+    const parts = rawInput.split(' ');
+    const cmd = parts[0].toLowerCase();
+    const arg = parts.slice(1).join(' ').toLowerCase().trim();
 
     let response = '';
-    if (cmd === 'help') {
-      response = 'Available commands: help, skills, about, clear, date';
-    } else if (cmd === 'skills') {
-      response = 'Core Skills: React, Tailwind CSS, JavaScript, Git.';
-    } else if (cmd === 'about') {
-      response = 'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway).';
-    } else if (cmd === 'clear') {
-      setCommandHistory([]);
-      setInputCommand('');
-      return;
-    } else if (cmd === 'date') {
-      response = new Date().toString();
-    } else {
-      response = `synth-sh: command not found: '${cmd}'. Type 'help' to see the command list.`;
+
+    switch (cmd) {
+      case 'help':
+        response = `COMMAND REFERENCE (Synth-OS v2.0.1):
+  ls [dir]     :: List files and repositories
+  cat <file>   :: Output file contents or launch document
+  open <name>  :: Launch application window (e.g. open resume, open map)
+  cd <dir>     :: Change directory (~, /projects, about, resume)
+  pwd          :: Print current working directory
+  skills       :: Display technical stack and core competencies
+  clear        :: Clear terminal screen history
+  date         :: Display current system timestamp`;
+        break;
+
+      case 'pwd':
+        response = currentDir === '~' ? '/home/neizan' : `/home/neizan/${currentDir.replace('~/', '')}`;
+        break;
+
+      case 'cd':
+        if (!arg || arg === '~' || arg === '/home' || arg === '/home/neizan') {
+          setCurrentDir('~');
+          response = 'Changed directory to ~ (home)';
+        } else if (arg === '..' || arg === '../') {
+          setCurrentDir('~');
+          response = 'Changed directory to ~';
+        } else if (arg === 'projects' || arg === '/projects' || arg === '~/projects') {
+          setCurrentDir('~/projects');
+          response = 'Changed directory to ~/projects';
+        } else if (arg === 'about' || arg === 'resume' || arg === 'map') {
+          response = `synth-sh: cd: ${arg}: Not a directory (it is a file/executable). Use 'open ${arg}' or 'cat ${arg}'.`;
+        } else {
+          response = `synth-sh: cd: no such directory: ${arg}`;
+        }
+        break;
+
+      case 'ls':
+        if (currentDir.includes('project') || arg === 'projects' || arg === '/projects') {
+          response = `total 4 repositories
+drwxr-xr-x 1 neizan neizan  APP-phone-company (C++, OOP)
+drwxr-xr-x 1 neizan neizan  Alpha-Beta-tictactoe (AI, MinMax)
+drwxr-xr-x 1 neizan neizan  Greedy-algorithms-tournament (Algorithms)
+drwxr-xr-x 1 neizan neizan  Numerical-Modeling-on-Python (Data, Math)`;
+        } else {
+          response = `total 5 items
+-rw-r--r-- 1 neizan neizan 1.2K  about-me.txt
+-rwxr-xr-x 1 neizan neizan 840K  ResumeViewer.exe
+drwxr-xr-x 2 neizan neizan 4.0K  projects/
+-rwxr-xr-x 1 neizan neizan 512K  Trajectory.map
+-rwxr-xr-x 1 neizan neizan 720K  Terminal.exe`;
+        }
+        break;
+
+      case 'cat':
+      case 'open':
+        if (!arg) {
+          response = `Usage: ${cmd} <file|name> (e.g. ${cmd} resume, ${cmd} about-me.txt, ${cmd} projects, ${cmd} map)`;
+        } else {
+          const opened = onOpenApp ? onOpenApp(arg) : false;
+          if (opened) {
+            response = `[OK] Dispatched GUI signal: Launched window instance for '${arg}'.`;
+          } else {
+            response = `synth-sh: ${cmd}: '${arg}': Unknown file or application. Type 'ls' to view available entries.`;
+          }
+        }
+        break;
+
+      case 'skills':
+        response = `Core Technical Stack:
+• C / C++: Core Logic, Data Structures, OOP, Memory Management.
+• Python & AI: Algorithms, Agent Development, Data Processing.
+• Java & SQL: Backend Architecture, Queries, Relational Databases.
+• Web & Full-Stack: JavaScript, Go, React, Tailwind CSS.`;
+        break;
+
+      case 'about':
+        if (onOpenApp) onOpenApp('about');
+        response = 'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway). [Window opened]';
+        break;
+
+      case 'clear':
+        setCommandHistory([]);
+        setInputCommand('');
+        return;
+
+      case 'date':
+        response = new Date().toUTCString();
+        break;
+
+      default:
+        response = `synth-sh: command not found: '${cmd}'. Type 'help' to see available commands.`;
+        break;
     }
 
-    setCommandHistory((prev) => [...prev, { command: inputCommand, response }]);
+    setCommandHistory((prev) => [
+      ...prev,
+      { dir: currentDir, command: rawInput, response },
+    ]);
     setInputCommand('');
   };
 
@@ -150,7 +235,7 @@ export default function Terminal() {
             </div>
 
             <p className="text-[11px] text-text-main/50 italic pt-1">
-              Type 'help' in the prompt to view available commands.
+              Type 'help' in the prompt to view available system commands.
             </p>
           </div>
         )}
@@ -159,11 +244,11 @@ export default function Terminal() {
         {commandHistory.map((item, idx) => (
           <div key={idx} className="space-y-0.5 pt-1">
             <div className="flex items-center gap-2 text-slate-200">
-              <span className="text-accent-cyan">neizan@synth-os:~$</span>
+              <span className="text-accent-cyan">neizan@synth-os:{item.dir}$</span>
               <span>{item.command}</span>
             </div>
             {item.response && (
-              <div className="text-text-main/80 pl-4 whitespace-pre-wrap">
+              <div className="text-text-main/80 pl-4 whitespace-pre-wrap font-mono text-[11px] leading-relaxed">
                 {item.response}
               </div>
             )}
@@ -175,13 +260,13 @@ export default function Terminal() {
       {bootFinished && (
         <form onSubmit={handleCommandSubmit} className="mt-4 pt-2 border-t border-white/5 flex items-center gap-2">
           <span className="text-accent-cyan font-bold select-none shrink-0">
-            neizan@synth-os:~$
+            neizan@synth-os:{currentDir}$
           </span>
           <input
             type="text"
             value={inputCommand}
             onChange={(e) => setInputCommand(e.target.value)}
-            placeholder="type a command..."
+            placeholder="type a command (e.g. ls, open resume, help)..."
             className="flex-1 bg-transparent text-slate-100 outline-none font-mono text-xs placeholder:text-text-main/30"
             autoFocus
           />

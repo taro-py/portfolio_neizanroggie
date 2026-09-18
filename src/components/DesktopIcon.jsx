@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Terminal, Folder, FileText } from 'lucide-react';
+import { Terminal, Folder, FileText, Compass } from 'lucide-react';
 
 const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
   'file-text': FileText,
+  map: Compass,
 };
 
 /**

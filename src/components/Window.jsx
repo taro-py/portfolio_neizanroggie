@@ -1,6 +1,6 @@
 import { Rnd } from 'react-rnd';
 import { motion } from 'framer-motion';
-import { Minus, Square, Copy, X, Terminal, Folder, FileText } from 'lucide-react';
+import { Minus, Square, Copy, X, Terminal, Folder, FileText, Compass } from 'lucide-react';
 
 /**
  * Maps icon identifiers to Lucide components
@@ -9,6 +9,7 @@ const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
   'file-text': FileText,
+  map: Compass,
 };
 
 /**
