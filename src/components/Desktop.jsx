@@ -1,12 +1,16 @@
+import { useEffect } from 'react';
 import Taskbar from './Taskbar';
 import Window from './Window';
 import DesktopIcon from './DesktopIcon';
+import Notepad from './apps/Notepad';
+import Terminal from './apps/Terminal';
 import { useWindowManager } from '../hooks/useWindowManager';
 
 /**
  * Desktop Component
  * Main viewport container and workspace orchestrator.
- * Renders desktop icons, manages multiple draggable/resizable windows, and anchors the Taskbar.
+ * Renders desktop icons, manages multiple draggable/resizable windows with exact maximize bounds,
+ * autostarts about-me.txt, and anchors the Taskbar.
  */
 export default function Desktop() {
   const {
@@ -24,10 +28,16 @@ export default function Desktop() {
   // Desktop shortcut configurations
   const desktopShortcuts = [
     {
+      id: 'about',
+      title: 'about-me.txt',
+      icon: 'file-text',
+      size: { width: 580, height: 460 },
+    },
+    {
       id: 'terminal',
       title: 'Terminal.exe',
       icon: 'terminal',
-      size: { width: 640, height: 420 },
+      size: { width: 660, height: 430 },
     },
     {
       id: 'projects',
@@ -36,6 +46,22 @@ export default function Desktop() {
       size: { width: 560, height: 380 },
     },
   ];
+
+  // Autostart about-me.txt centered on initial page load
+  useEffect(() => {
+    const initialWidth = Math.min(window.innerWidth - 40, 580);
+    const initialHeight = Math.min(window.innerHeight - 90, 460);
+    const posX = Math.max(20, Math.floor((window.innerWidth - initialWidth) / 2));
+    const posY = Math.max(20, Math.floor((window.innerHeight - 48 - initialHeight) / 2));
+
+    openWindow({
+      id: 'about',
+      title: 'about-me.txt',
+      icon: 'file-text',
+      size: { width: initialWidth, height: initialHeight },
+      position: { x: posX, y: posY },
+    });
+  }, [openWindow]);
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-os text-main flex flex-col justify-between select-none">
@@ -55,20 +81,19 @@ export default function Desktop() {
         aria-hidden="true"
       />
 
-      {/* Desktop Workspace */}
+      {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) with no padding */}
       <div
         id="desktop-workspace"
-        className="relative z-10 flex-1 w-full h-[calc(100vh-3rem)] p-5 overflow-hidden"
+        className="relative z-10 w-full h-[calc(100vh-48px)] overflow-hidden"
       >
-        {/* Desktop Icons Grid (Top-Left) */}
+        {/* Desktop Icons Grid (Positioned in top-left) */}
         <section
           aria-label="Iconos del escritorio"
-          className="inline-flex flex-col gap-4 z-0 relative"
+          className="absolute top-5 left-5 inline-flex flex-col gap-4 z-0 pointer-events-auto"
         >
           {desktopShortcuts.map((shortcut) => (
             <DesktopIcon
               key={shortcut.id}
-              id={shortcut.id}
               title={shortcut.title}
               icon={shortcut.icon}
               onOpen={() => openWindow(shortcut)}
@@ -86,25 +111,36 @@ export default function Desktop() {
               SYSTEM READY<span className="animate-pulse text-accent-cyan">_</span>
             </h1>
             <p className="font-mono text-[11px] text-text-main/60 tracking-wider">
-              Double click any desktop icon to launch window
+              Double click any desktop icon to launch application
             </p>
           </div>
         </div>
 
         {/* Active Windows rendered inside workspace bounds */}
-        {windows.map((win) => (
-          <Window
-            key={win.id}
-            windowData={win}
-            isActive={win.id === activeWindowId}
-            onFocus={focusWindow}
-            onClose={closeWindow}
-            onMinimize={minimizeWindow}
-            onMaximize={maximizeWindow}
-            onDragStop={updateWindowPosition}
-            onResizeStop={updateWindowSize}
-          />
-        ))}
+        {windows.map((win) => {
+          let appContent = null;
+          if (win.id === 'about') {
+            appContent = <Notepad />;
+          } else if (win.id === 'terminal') {
+            appContent = <Terminal />;
+          }
+
+          return (
+            <Window
+              key={win.id}
+              windowData={win}
+              isActive={win.id === activeWindowId}
+              onFocus={focusWindow}
+              onClose={closeWindow}
+              onMinimize={minimizeWindow}
+              onMaximize={maximizeWindow}
+              onDragStop={updateWindowPosition}
+              onResizeStop={updateWindowSize}
+            >
+              {appContent}
+            </Window>
+          );
+        })}
       </div>
 
       {/* Taskbar anchored at the bottom */}
@@ -118,7 +154,7 @@ export default function Desktop() {
             id: 'terminal',
             title: 'Terminal.exe',
             icon: 'terminal',
-            size: { width: 640, height: 420 },
+            size: { width: 660, height: 430 },
           })
         }
       />

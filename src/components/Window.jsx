@@ -1,6 +1,6 @@
 import { Rnd } from 'react-rnd';
 import { motion } from 'framer-motion';
-import { Minus, Square, Copy, X, Terminal, Folder } from 'lucide-react';
+import { Minus, Square, Copy, X, Terminal, Folder, FileText } from 'lucide-react';
 
 /**
  * Maps icon identifiers to Lucide components
@@ -8,6 +8,7 @@ import { Minus, Square, Copy, X, Terminal, Folder } from 'lucide-react';
 const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
+  'file-text': FileText,
 };
 
 /**
@@ -27,9 +28,9 @@ export default function Window({
 }) {
   const IconComponent = ICON_MAP[windowData.icon] || Terminal;
 
-  // Maximize geometry constraints
+  // Maximize geometry constraints (100vw and calc(100vh - 48px) excluding taskbar)
   const size = windowData.isMaximized
-    ? { width: '100%', height: 'calc(100vh - 3rem)' }
+    ? { width: '100vw', height: 'calc(100vh - 48px)' }
     : windowData.size;
 
   const position = windowData.isMaximized
@@ -71,7 +72,9 @@ export default function Window({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.16, ease: 'easeOut' }}
-        className={`w-full h-full flex flex-col rounded-lg overflow-hidden bg-os transition-shadow duration-200 border ${
+        className={`w-full h-full flex flex-col overflow-hidden bg-os transition-shadow duration-200 border ${
+          windowData.isMaximized ? 'rounded-none border-t-0 border-x-0' : 'rounded-lg'
+        } ${
           isActive
             ? 'border-accent-cyan/50 shadow-[0_0_25px_rgba(0,229,255,0.18)]'
             : 'border-accent-purple/30 shadow-[0_12px_32px_rgba(0,0,0,0.6)]'
@@ -79,7 +82,9 @@ export default function Window({
       >
         {/* Window Titlebar / Drag Handle */}
         <header
-          className={`window-drag-handle h-9 px-3 bg-window border-b flex items-center justify-between cursor-move select-none transition-colors duration-200 ${
+          className={`window-drag-handle h-9 px-3 bg-window border-b flex items-center justify-between select-none transition-colors duration-200 ${
+            windowData.isMaximized ? 'cursor-default' : 'cursor-move'
+          } ${
             isActive
               ? 'border-accent-cyan/20'
               : 'border-accent-purple/20'
@@ -144,7 +149,7 @@ export default function Window({
         </header>
 
         {/* Window Content Area */}
-        <div className="flex-1 w-full overflow-auto bg-os p-4 text-text-main font-mono text-xs select-text">
+        <div className="flex-1 w-full overflow-auto bg-os text-text-main font-mono text-xs select-text">
           {children || (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
               <div className="p-3 rounded-full bg-white/[0.03] border border-white/10 text-accent-cyan">
@@ -155,7 +160,7 @@ export default function Window({
                   {windowData.title}
                 </p>
                 <p className="text-[11px] text-text-main/60 mt-1">
-                  Módulo inicializado en entorno de pruebas. Contenido interactivo disponible en la siguiente fase.
+                  Módulo inicializado en entorno de pruebas.
                 </p>
               </div>
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-black/40 border border-white/5 text-[10px] text-accent-cyan/80">

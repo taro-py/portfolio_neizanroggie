@@ -1,9 +1,10 @@
-import { Terminal, Folder, Wifi, Volume2, ShieldCheck } from 'lucide-react';
+import { Terminal, Folder, FileText, Wifi, Volume2, ShieldCheck } from 'lucide-react';
 import Clock from './Clock';
 
 const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
+  'file-text': FileText,
 };
 
 /**

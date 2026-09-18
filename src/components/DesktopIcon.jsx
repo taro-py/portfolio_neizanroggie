@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Terminal, Folder } from 'lucide-react';
+import { Terminal, Folder, FileText } from 'lucide-react';
 
 const ICON_MAP = {
   terminal: Terminal,
   folder: Folder,
+  'file-text': FileText,
 };
 
 /**
@@ -16,7 +17,7 @@ export default function DesktopIcon({
   onOpen,
 }) {
   const [isSelected, setIsSelected] = useState(false);
-  const Icon = ICON_MAP[icon] || Terminal;
+  const Icon = ICON_MAP[icon] || FileText;
 
   return (
     <div
@@ -53,7 +54,7 @@ export default function DesktopIcon({
 
       {/* Icon label */}
       <span
-        className={`font-mono text-[11px] text-center tracking-wide leading-tight px-1 py-0.5 rounded transition-colors ${
+        className={`font-mono text-[11px] text-center tracking-wide leading-tight px-1 py-0.5 rounded transition-colors break-words max-w-[84px] ${
           isSelected
             ? 'bg-accent-cyan/30 text-white font-medium'
             : 'text-slate-300 group-hover:text-accent-cyan'
