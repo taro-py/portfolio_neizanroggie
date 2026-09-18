@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Globe, Navigation, Briefcase, Sparkles } from 'lucide-react';
+import { Globe, Navigation, Briefcase, Sparkles, Minus, Square, Copy, X } from 'lucide-react';
 
 const MILESTONES = {
   huelva: {
@@ -62,29 +62,97 @@ const NODES_LIST = [MILESTONES.nc, MILESTONES.huelva, MILESTONES.stavanger];
  * Static Vector World Map with zero hover zoom, conditional milestone panel on hover,
  * and exact geographical marker positions.
  */
-export default function TrajectoryMap() {
+export default function TrajectoryMap({
+  windowData = { id: 'map', isMaximized: false },
+  onMinimize,
+  onMaximize,
+  onClose,
+}) {
   const [hoveredNode, setHoveredNode] = useState('stavanger');
 
   const activeInfo = MILESTONES[hoveredNode] || MILESTONES.stavanger;
 
   return (
     <div className="flex flex-col h-full overflow-hidden w-full absolute inset-0 bg-os font-mono select-none">
-      {/* Top Tactical Bar */}
-      <div className="h-9 px-4 bg-window/90 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 z-20">
-        <div className="flex items-center gap-2 text-slate-300 text-[11px]">
-          <Globe className="w-3.5 h-3.5 text-accent-cyan" />
-          <span>guest@synth-os : ~/geo $ dotmap --world</span>
+      {/* Top Tactical Bar / Window Titlebar */}
+      <div
+        className={`window-drag-handle h-9 px-3 bg-window/90 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 z-20 select-none ${
+          windowData?.isMaximized ? 'cursor-default' : 'cursor-move'
+        }`}
+        onDoubleClick={() => onMaximize?.(windowData?.id || 'map')}
+      >
+        <div className="flex items-center gap-2 text-slate-300 text-[11px] pointer-events-none">
+          <Globe className="w-3.5 h-3.5 text-accent-cyan shrink-0" />
+          <span className="truncate">guest@synth-os : ~/geo $ dotmap --world</span>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-[10px]">
+        <div className="hidden md:flex items-center gap-2 text-[10px] pointer-events-none">
           <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse shadow-[0_0_8px_#00E5FF]" />
           <span className="text-accent-cyan font-semibold tracking-wider">
             GLOBAL VECTOR MAP &bull; 3 NODES MAPPED
           </span>
         </div>
 
-        <div className="text-[10px] text-text-main/60 hidden md:block">
-          CURRENT LOCATION: <span className="text-accent-cyan">STAVANGER (UiS - YEAR 4)</span>
+        {/* Right side: Current location & Window Action Buttons */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="text-[10px] text-text-main/60 hidden lg:block pointer-events-none">
+            CURRENT: <span className="text-accent-cyan font-semibold">STAVANGER (UiS)</span>
+          </div>
+
+          {/* Window Action Controls */}
+          <div
+            className="flex items-center gap-1"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {/* Minimize Button */}
+            <button
+              type="button"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMinimize?.(windowData?.id || 'map');
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              title="Minimize"
+              aria-label="Minimize"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Maximize / Restore Button */}
+            <button
+              type="button"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMaximize?.(windowData?.id || 'map');
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              title={windowData?.isMaximized ? 'Restore' : 'Maximize'}
+              aria-label={windowData?.isMaximized ? 'Restore' : 'Maximize'}
+            >
+              {windowData?.isMaximized ? (
+                <Copy className="w-3 h-3 rotate-180" />
+              ) : (
+                <Square className="w-3 h-3" />
+              )}
+            </button>
+
+            {/* Close Button */}
+            <button
+              type="button"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose?.(windowData?.id || 'map');
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer"
+              title="Close"
+              aria-label="Close"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 

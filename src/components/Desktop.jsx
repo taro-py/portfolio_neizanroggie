@@ -204,7 +204,14 @@ export default function Desktop() {
           } else if (win.id === 'projects') {
             appContent = <ProjectsExplorer />;
           } else if (win.id === 'map') {
-            appContent = <TrajectoryMap />;
+            appContent = (
+              <TrajectoryMap
+                windowData={win}
+                onMinimize={minimizeWindow}
+                onMaximize={maximizeWindow}
+                onClose={closeWindow}
+              />
+            );
           }
 
           return (

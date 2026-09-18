@@ -65,34 +65,67 @@ export default function Window({
       style={{
         zIndex: windowData.zIndex || 10,
         display: windowData.isMinimized ? 'none' : 'block',
+        ...(windowData.isMaximized
+          ? {
+              top: 0,
+              left: 0,
+              transform: 'none',
+              width: '100vw',
+              height: 'calc(100vh - 48px)',
+              borderRadius: '0px',
+            }
+          : {}),
       }}
       onMouseDown={() => onFocus(windowData.id)}
-      className="select-none"
+      className={`select-none ${
+        windowData.isMaximized
+          ? '!top-0 !left-0 !transform-none !w-screen !h-[calc(100vh-48px)] !rounded-none'
+          : ''
+      }`}
     >
       <motion.div
-        style={{ zIndex: windowData.zIndex || 10 }}
+        style={{
+          zIndex: windowData.zIndex || 10,
+          ...(windowData.isMaximized
+            ? {
+                top: 0,
+                left: 0,
+                transform: 'none',
+                width: '100vw',
+                height: 'calc(100vh - 48px)',
+                borderRadius: '0px',
+              }
+            : {}),
+        }}
         initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={
+          windowData.isMaximized
+            ? { opacity: 1, scale: 1, x: 0, y: 0 }
+            : { opacity: 1, scale: 1 }
+        }
         transition={{ duration: 0.16, ease: 'easeOut' }}
         className={`w-full h-full flex flex-col overflow-hidden bg-os transition-shadow duration-200 border ${
-          windowData.isMaximized ? 'rounded-none border-t-0 border-x-0' : 'rounded-lg'
+          windowData.isMaximized
+            ? '!rounded-none border-t-0 border-x-0 !transform-none !w-screen !h-[calc(100vh-48px)]'
+            : 'rounded-lg'
         } ${
           isActive
             ? 'border-accent-cyan/50 shadow-[0_0_25px_rgba(0,229,255,0.18)]'
             : 'border-accent-purple/30 shadow-[0_12px_32px_rgba(0,0,0,0.6)]'
         }`}
       >
-        {/* Window Titlebar / Drag Handle */}
-        <header
-          className={`window-drag-handle h-9 px-3 bg-window border-b flex items-center justify-between select-none transition-colors duration-200 ${
-            windowData.isMaximized ? 'cursor-default' : 'cursor-move'
-          } ${
-            isActive
-              ? 'border-accent-cyan/20'
-              : 'border-accent-purple/20'
-          }`}
-          onDoubleClick={() => onMaximize(windowData.id)}
-        >
+        {/* Window Titlebar / Drag Handle (integrated in custom views like map) */}
+        {windowData.id !== 'map' && (
+          <header
+            className={`window-drag-handle h-9 px-3 bg-window border-b flex items-center justify-between select-none transition-colors duration-200 ${
+              windowData.isMaximized ? 'cursor-default' : 'cursor-move'
+            } ${
+              isActive
+                ? 'border-accent-cyan/20'
+                : 'border-accent-purple/20'
+            }`}
+            onDoubleClick={() => onMaximize(windowData.id)}
+          >
           {/* Left: Window Title & Icon */}
           <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
             <IconComponent
@@ -161,9 +194,14 @@ export default function Window({
             </button>
           </div>
         </header>
+        )}
 
         {/* Window Content Area */}
-        <div className="flex-1 w-full overflow-auto bg-os text-text-main font-mono text-xs select-text">
+        <div
+          className={`flex-1 w-full bg-os text-text-main font-mono text-xs select-text ${
+            windowData.id === 'map' ? 'overflow-hidden relative' : 'overflow-auto'
+          }`}
+        >
           {children || (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
               <div className="p-3 rounded-full bg-white/[0.03] border border-white/10 text-accent-cyan">
