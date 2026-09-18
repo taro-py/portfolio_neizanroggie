@@ -29,6 +29,9 @@ export default function Window({
   children,
 }) {
   const handleBringToFront = bringToFront || onFocus;
+  const bringToFrontHandler = () => {
+    handleBringToFront?.(windowData.id);
+  };
   const IconComponent = ICON_MAP[windowData.icon] || Terminal;
 
   // Maximize geometry constraints (100vw and calc(100vh - 48px) excluding taskbar)
@@ -78,7 +81,9 @@ export default function Window({
             }
           : {}),
       }}
-      onMouseDown={() => handleBringToFront?.(windowData.id)}
+      onPointerDownCapture={bringToFrontHandler}
+      onClickCapture={bringToFrontHandler}
+      onMouseDown={bringToFrontHandler}
       className={`select-none ${
         windowData.isMaximized
           ? '!top-0 !left-0 !transform-none !w-screen !h-[calc(100vh-48px)] !rounded-none'
@@ -86,8 +91,10 @@ export default function Window({
       }`}
     >
       <motion.div
-        onMouseDown={() => handleBringToFront?.(windowData.id)}
-        onMouseDownCapture={() => handleBringToFront?.(windowData.id)}
+        onPointerDownCapture={bringToFrontHandler}
+        onClickCapture={bringToFrontHandler}
+        onMouseDownCapture={bringToFrontHandler}
+        onMouseDown={bringToFrontHandler}
         style={{
           zIndex: windowData.zIndex || 10,
           ...(windowData.isMaximized
@@ -202,6 +209,8 @@ export default function Window({
 
         {/* Window Content Area */}
         <div
+          onPointerDownCapture={bringToFrontHandler}
+          onClickCapture={bringToFrontHandler}
           className={`flex-1 w-full bg-os text-text-main font-mono text-xs select-text ${
             windowData.id === 'map' ? 'overflow-hidden relative' : 'overflow-auto'
           }`}

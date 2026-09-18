@@ -15,9 +15,9 @@ const MILESTONES = {
     coords: '37.26° N, 6.94° W',
     period: 'Foundations (Years 1-3)',
     color: 'purple',
-    positionClass: 'top-[29%] left-[46.5%]',
+    positionClass: 'top-[36%] left-[47.5%]',
     labelDirection: 'below',
-    svgPos: { x: 465, y: 290 },
+    svgPos: { x: 475, y: 360 },
   },
   nc: {
     id: 'nc',
@@ -49,9 +49,9 @@ const MILESTONES = {
     coords: '58.97° N, 5.73° E',
     period: 'Active Academic Term (Year 4)',
     color: 'cyan',
-    positionClass: 'top-[15%] left-[51%]',
+    positionClass: 'top-[22%] left-[51%]',
     labelDirection: 'above',
-    svgPos: { x: 510, y: 150 },
+    svgPos: { x: 510, y: 220 },
   },
 };
 
@@ -203,9 +203,9 @@ export default function TrajectoryMap({
           </g>
 
           {/* Precision Flight Arcs originating from Huelva */}
-          {/* Arc 1: Huelva (465, 290) -> North Carolina (275, 300) [Purple to Emerald] */}
+          {/* Arc 1: Huelva (475, 360) -> North Carolina (275, 300) [Purple to Emerald] */}
           <path
-            d="M 465 290 Q 370 200 275 300"
+            d="M 475 360 Q 375 250 275 300"
             fill="none"
             stroke="url(#arcHuelvaToNC)"
             strokeWidth="2.5"
@@ -214,9 +214,9 @@ export default function TrajectoryMap({
             className="opacity-90"
           />
 
-          {/* Arc 2: Huelva (465, 290) -> Stavanger (510, 150) [Purple to Cyan] */}
+          {/* Arc 2: Huelva (475, 360) -> Stavanger (510, 220) [Purple to Cyan] */}
           <path
-            d="M 465 290 Q 487 220 510 150"
+            d="M 475 360 Q 492 280 510 220"
             fill="none"
             stroke="url(#arcHuelvaToStavanger)"
             strokeWidth="2.8"
