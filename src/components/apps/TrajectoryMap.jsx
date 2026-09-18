@@ -16,11 +16,10 @@ const NODES = [
     status: 'COMPLETED',
     isCurrent: false,
     color: 'purple',
-    // Hardcoded absolute position: top-[45%] left-[20%]
-    positionClass: 'top-[45%] left-[20%]',
-    labelPosition: 'below', // Centered below
-    // Exact SVG coordinate in viewBox 0 0 1000 500 (20% of 1000 = 200, 45% of 500 = 225)
-    svgPos: { x: 200, y: 225 },
+    // Geographically calibrated percentage for real equirectangular world map
+    positionClass: 'top-[31%] left-[28%]',
+    labelDirection: 'below',
+    svgPos: { x: 280, y: 155 },
     icon: Briefcase,
   },
   {
@@ -37,11 +36,10 @@ const NODES = [
     status: 'COMPLETED',
     isCurrent: false,
     color: 'purple',
-    // Hardcoded absolute position: top-[70%] left-[55%]
-    positionClass: 'top-[70%] left-[55%]',
-    labelPosition: 'below', // Under its point with mt
-    // Exact SVG coordinate in viewBox 0 0 1000 500 (55% of 1000 = 550, 70% of 500 = 350)
-    svgPos: { x: 550, y: 350 },
+    // Geographically calibrated percentage for real equirectangular world map
+    positionClass: 'top-[30%] left-[48%]',
+    labelDirection: 'below',
+    svgPos: { x: 480, y: 150 },
     icon: GraduationCap,
   },
   {
@@ -58,20 +56,18 @@ const NODES = [
     status: 'ACTIVE NOW',
     isCurrent: true,
     color: 'cyan',
-    // Hardcoded absolute position: top-[20%] left-[65%]`
-    positionClass: 'top-[20%] left-[65%]',
-    labelPosition: 'above', // Above its point with negative mt
-    // Exact SVG coordinate in viewBox 0 0 1000 500 (65% of 1000 = 650, 20% of 500 = 100)
-    svgPos: { x: 650, y: 100 },
+    // Geographically calibrated percentage for real equirectangular world map
+    positionClass: 'top-[17%] left-[51.6%]',
+    labelDirection: 'above',
+    svgPos: { x: 516, y: 86 },
     icon: Sparkles,
   },
 ];
 
 /**
  * TrajectoryMap Component
- * Abstract tactical dot-matrix canvas with hardcoded node separation
- * (NC: 20%, 45% | Huelva: 55%, 70% | Stavanger: 65%, 20%)
- * guaranteed zero label overlapping, precision curved flight arcs, and high-tech Synth-OS styling.
+ * Real Vector World Map background (Wikimedia Commons) with geographically fitted
+ * markers, precision curved transatlantic flight arcs, and anti-overlap labels.
  */
 export default function TrajectoryMap() {
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
@@ -85,42 +81,41 @@ export default function TrajectoryMap() {
       <div className="h-9 px-4 bg-window/90 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 z-20">
         <div className="flex items-center gap-2 text-slate-300 text-[11px]">
           <Globe className="w-3.5 h-3.5 text-accent-cyan" />
-          <span>guest@synth-os : ~/geo $ dotmap --mesh</span>
+          <span>guest@synth-os : ~/geo $ dotmap --world</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 text-[10px]">
           <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse shadow-[0_0_8px_#00E5FF]" />
           <span className="text-accent-cyan font-semibold tracking-wider">
-            NODAL SEPARATION // 3 ZONES ACTIVE
+            GLOBAL VECTOR MAP &bull; 3 NODES MAPPED
           </span>
         </div>
 
         <div className="text-[10px] text-text-main/60 hidden md:block">
-          LOCATION: <span className="text-accent-cyan">STAVANGER (UiS - YEAR 4)</span>
+          CURRENT LOCATION: <span className="text-accent-cyan">STAVANGER (UiS - YEAR 4)</span>
         </div>
       </div>
 
       {/* Main Map Viewport Canvas */}
       <div className="flex-1 relative overflow-auto p-3 sm:p-6 flex flex-col justify-between items-center">
-        {/* Map Container */}
-        <div className="relative w-full max-w-[880px] aspect-[2/1] my-auto bg-[#0b0c14] rounded-lg border border-white/10 overflow-hidden shadow-2xl">
-          {/* Abstract Cyber Dot-Matrix Grid */}
+        {/* Map Viewport Container */}
+        <div className="relative w-full max-w-[900px] aspect-[1.8/1] my-auto bg-[#0b0c14] rounded-lg border border-white/10 overflow-hidden shadow-2xl">
+          {/* Real Vector World Map Layer */}
+          <div
+            className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')] bg-no-repeat bg-center bg-contain opacity-20 pointer-events-none"
+            style={{
+              backgroundImage: `url('/world-map.svg'), url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg'), url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')`,
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Coordinate Reference Lines & Flight Arcs SVG */}
           <svg
             viewBox="0 0 1000 500"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain absolute inset-0 pointer-events-none"
             preserveAspectRatio="none"
           >
             <defs>
-              {/* Ultra-subtle abstract dot-matrix pattern */}
-              <pattern
-                id="abstractDots"
-                width="25"
-                height="25"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="2" cy="2" r="1.1" fill="#A9B1D6" fillOpacity="0.10" />
-              </pattern>
-
               {/* Trajectory Arc Gradient (Purple -> Cyan) */}
               <linearGradient id="arcGradient" x1="0%" y1="100%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.9" />
@@ -128,7 +123,7 @@ export default function TrajectoryMap() {
                 <stop offset="100%" stopColor="#00E5FF" stopOpacity="1" />
               </linearGradient>
 
-              {/* Glow filters */}
+              {/* Glowing drop shadows */}
               <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00E5FF" floodOpacity="0.75" />
               </filter>
@@ -137,29 +132,16 @@ export default function TrajectoryMap() {
               </filter>
             </defs>
 
-            {/* Background Pattern Fill */}
-            <rect width="1000" height="500" fill="url(#abstractDots)" />
-
-            {/* Subtle Tactical Coordinate Crosshairs and Gridlines */}
-            <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="4 4">
-              <line x1="0" y1="125" x2="1000" y2="125" />
-              <line x1="0" y1="250" x2="1000" y2="250" strokeOpacity="0.1" />
-              <line x1="0" y1="375" x2="1000" y2="375" />
-              <line x1="250" y1="0" x2="250" y2="500" />
-              <line x1="500" y1="0" x2="500" y2="500" strokeOpacity="0.1" />
-              <line x1="750" y1="0" x2="750" y2="500" />
+            {/* Subtle Equirectangular Reference Grid */}
+            <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="3 3">
+              <line x1="0" y1="250" x2="1000" y2="250" strokeOpacity="0.1" /> {/* Equator */}
+              <line x1="500" y1="0" x2="500" y2="500" strokeOpacity="0.1" /> {/* Prime Meridian */}
             </g>
 
-            {/* Decorative Tactical Radar Crosshairs behind Stavanger (Current Node: 650, 100) */}
-            <g stroke="#00E5FF" strokeOpacity="0.15" fill="none" strokeWidth="0.75">
-              <circle cx="650" cy="100" r="35" strokeDasharray="3 3" />
-              <circle cx="650" cy="100" r="60" strokeDasharray="2 4" />
-            </g>
-
-            {/* Precision Flight Arcs connecting hardcoded coordinates */}
-            {/* Arc 1: Huelva (550, 350) -> North Carolina (200, 225) */}
+            {/* Precision Flight Arcs connecting geographical markers */}
+            {/* Arc 1: Huelva (480, 150) -> North Carolina (280, 155) */}
             <path
-              d="M 550 350 Q 360 340 200 225"
+              d="M 480 150 Q 380 105 280 155"
               fill="none"
               stroke="#9D4EDD"
               strokeWidth="2.5"
@@ -168,9 +150,9 @@ export default function TrajectoryMap() {
               className="opacity-90"
             />
 
-            {/* Arc 2: North Carolina (200, 225) -> Stavanger (650, 100) */}
+            {/* Arc 2: North Carolina (280, 155) -> Stavanger (516, 86) */}
             <path
-              d="M 200 225 Q 400 70 650 100"
+              d="M 280 155 Q 385 45 516 86"
               fill="none"
               stroke="url(#arcGradient)"
               strokeWidth="2.8"
@@ -179,7 +161,7 @@ export default function TrajectoryMap() {
             />
           </svg>
 
-          {/* Hardcoded Interactive HTML Markers & Anti-Overlap Labels */}
+          {/* Interactive HTML Markers & Anti-Overlap Labels */}
           {NODES.map((node) => {
             const isHovered = hoveredNodeId === node.id;
             const isSelected = selectedNodeId === node.id;
@@ -193,7 +175,7 @@ export default function TrajectoryMap() {
                 onMouseLeave={() => setHoveredNodeId(null)}
                 onClick={() => setSelectedNodeId(node.id)}
               >
-                {/* Marker Pin Beacon */}
+                {/* Marker Beacon */}
                 <div className="relative flex items-center justify-center cursor-pointer p-2 group">
                   {isCurrent ? (
                     <>
@@ -212,10 +194,10 @@ export default function TrajectoryMap() {
                   )}
                 </div>
 
-                {/* Permanent Directional Label (Fixed Badge, Zero Overlap) */}
-                {node.labelPosition === 'above' ? (
-                  /* Stavanger: Label positioned ABOVE with negative margin (-mt-12) */
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 -mt-12 flex flex-col items-center pointer-events-none select-none">
+                {/* Permanent Directional Label (Zero Overlap) */}
+                {node.labelDirection === 'above' ? (
+                  /* Stavanger: Positioned ABOVE the marker */
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 flex flex-col items-center pointer-events-none select-none">
                     <div
                       className={`px-2.5 py-1 rounded-md border backdrop-blur-md shadow-xl text-center whitespace-nowrap transition-all duration-200 ${
                         isSelected || isHovered
@@ -229,32 +211,11 @@ export default function TrajectoryMap() {
                       </p>
                       <p className="text-[10px] text-slate-300 font-mono">Current Location &bull; UiS (Year 4)</p>
                     </div>
-                    {/* Tiny connector tick pointing down to marker */}
                     <div className="w-0.5 h-2 bg-accent-cyan/40" />
                   </div>
-                ) : node.id === 'huelva' ? (
-                  /* Huelva: Label positioned BELOW with top margin (mt-10) */
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 flex flex-col items-center pointer-events-none select-none">
-                    {/* Tiny connector tick pointing up to marker */}
-                    <div className="w-0.5 h-2 bg-accent-purple/40" />
-                    <div
-                      className={`px-2.5 py-1 rounded-md border backdrop-blur-md shadow-xl text-center whitespace-nowrap transition-all duration-200 ${
-                        isSelected || isHovered
-                          ? 'bg-[#0d0e17] border-accent-purple text-slate-100 shadow-[0_0_16px_rgba(157,78,221,0.4)] scale-105'
-                          : 'bg-[#0d0e17]/90 border-white/15 text-slate-300'
-                      }`}
-                    >
-                      <p className="font-bold text-[11px] sm:text-xs text-slate-100 flex items-center justify-center gap-1.5">
-                        <span>{node.city}</span>
-                        <span className="text-[10px] text-text-main/70 font-normal">[{node.coords}]</span>
-                      </p>
-                      <p className="text-[10px] text-accent-purple font-mono">BSc Computer Engineering</p>
-                    </div>
-                  </div>
                 ) : (
-                  /* North Carolina: Label positioned CENTERED BELOW with margin */
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 flex flex-col items-center pointer-events-none select-none">
-                    {/* Tiny connector tick pointing up to marker */}
+                  /* Huelva & North Carolina: Positioned BELOW the marker */
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 flex flex-col items-center pointer-events-none select-none">
                     <div className="w-0.5 h-2 bg-accent-purple/40" />
                     <div
                       className={`px-2.5 py-1 rounded-md border backdrop-blur-md shadow-xl text-center whitespace-nowrap transition-all duration-200 ${
@@ -267,7 +228,9 @@ export default function TrajectoryMap() {
                         <span>{node.city}</span>
                         <span className="text-[10px] text-text-main/70 font-normal">[{node.coords}]</span>
                       </p>
-                      <p className="text-[10px] text-accent-purple font-mono">321 Carpet &amp; Flooring</p>
+                      <p className="text-[10px] text-accent-purple font-mono">
+                        {node.id === 'huelva' ? 'BSc Computer Engineering' : '321 Carpet & Flooring'}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -277,7 +240,7 @@ export default function TrajectoryMap() {
         </div>
 
         {/* Selected Milestone Detail Card (Bottom HUD) */}
-        <div className="w-full max-w-[880px] mt-3 p-3.5 rounded-lg bg-window/90 border border-white/10 backdrop-blur-md z-20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xl">
+        <div className="w-full max-w-[900px] mt-3 p-3.5 rounded-lg bg-window/90 border border-white/10 backdrop-blur-md z-20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xl">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span
@@ -314,7 +277,7 @@ export default function TrajectoryMap() {
         </div>
 
         {/* Global Trajectory Flow Indicator */}
-        <div className="w-full max-w-[880px] mt-2 flex items-center justify-between gap-2 px-1 text-[10px] font-mono text-text-main/60">
+        <div className="w-full max-w-[900px] mt-2 flex items-center justify-between gap-2 px-1 text-[10px] font-mono text-text-main/60">
           <div className="flex items-center gap-1 text-slate-400">
             <Navigation className="w-3 h-3 text-accent-purple" />
             <span>1. Huelva, Spain (BSc Comp. Eng.)</span>

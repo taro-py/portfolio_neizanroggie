@@ -10,6 +10,25 @@ import TrajectoryMap from './apps/TrajectoryMap';
 import { useWindowManager } from '../hooks/useWindowManager';
 
 /**
+ * BinaryBackground Component
+ * Renders full-screen background block with subtle 010110 random binary strings.
+ */
+function BinaryBackground() {
+  const binaryContent =
+    '01011010 01100101 01110010 01101111 00100000 01001111 01010011 00100000 01010011 01011001 01010011 01010100 01000101 01001101 00100000 01010010 01000101 01000001 01000100 01011001 00100000 01001011 01000101 01010010 01001110 01000101 01001100 00100000 01110110 00110010 00101110 00110000 00101110 00110001 00100000 01001110 01000101 01001001 01011010 01000001 01001110 00100000 01010011 01010000 01000001 01001001 01001110 00100000 01010101 01010011 01000001 00100000 01001110 01001111 01010010 01010111 01000001 01011001 00100000 01110010 01100101 01110011 01110101 01101101 01100101 00101110 01100101 01111000 01100101 00100000 01110000 01110010 01101111 01101010 01100101 01100011 01110100 01110011 00101110 01110011 01101000 00100000 01110100 01100101 01110010 01101101 01101001 01101110 01100001 01101100 00101110 01100101 01111000 01100101 00100000 '
+      .repeat(50);
+
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 z-0 pointer-events-none font-mono text-white/5 break-all overflow-hidden h-full w-full p-4 text-xs sm:text-sm select-none leading-relaxed"
+    >
+      {binaryContent}
+    </div>
+  );
+}
+
+/**
  * Desktop Component
  * Main viewport container and workspace orchestrator.
  * Renders desktop shortcuts, coordinates open applications, and anchors the Taskbar.
@@ -116,27 +135,35 @@ export default function Desktop() {
     },
   ];
 
-  // Autostart about-me.txt centered on initial page load (guaranteed single execution)
+  // Dual autostart on initial page load: Terminal + Notepad side by side
   useEffect(() => {
     if (hasAutoStartedRef.current) return;
     hasAutoStartedRef.current = true;
 
-    const initialWidth = Math.min(window.innerWidth - 40, 620);
-    const initialHeight = Math.min(window.innerHeight - 90, 490);
-    const posX = Math.max(20, Math.floor((window.innerWidth - initialWidth) / 2));
-    const posY = Math.max(20, Math.floor((window.innerHeight - 48 - initialHeight) / 2));
+    // Window 1: Terminal.exe
+    openWindow({
+      id: 'terminal',
+      title: 'Terminal.exe',
+      icon: 'terminal',
+      size: { width: 600, height: 400 },
+      position: { x: 50, y: 50 },
+    });
 
+    // Window 2: about-me.txt (to the right of terminal)
     openWindow({
       id: 'about',
       title: 'about-me.txt',
       icon: 'file-text',
-      size: { width: initialWidth, height: initialHeight },
-      position: { x: posX, y: posY },
+      size: { width: 620, height: 490 },
+      position: { x: 700, y: 50 },
     });
   }, [openWindow]);
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-os text-main flex flex-col justify-between select-none">
+      {/* Full-screen subtle binary matrix veil */}
+      <BinaryBackground />
+
       {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) */}
       <div
         id="desktop-workspace"
@@ -157,38 +184,8 @@ export default function Desktop() {
           ))}
         </section>
 
-        {/* Ambient watermark & Cyberpunk binary matrix behind windows */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
-          {/* Subtle Cyberpunk Binary Code Clusters around center */}
-          <div className="absolute -top-16 -left-28 sm:-left-44 font-mono text-[10px] text-accent-cyan/[0.08] tracking-widest leading-relaxed select-none">
-            01101110 01100101 01101001 01111010<br />
-            01100001 01101110 00100000 01110010<br />
-            01101111 01100111 01100111 01101001
-          </div>
-          <div className="absolute -bottom-16 -right-24 sm:-right-40 font-mono text-xs text-white/[0.04] tracking-widest leading-relaxed select-none">
-            10010011 01010101 01001000 01010101<br />
-            01010101 01101001 01010011 00101101<br />
-            00110011 00100001 01000011 01000001
-          </div>
-          <div className="absolute -top-24 right-12 sm:right-28 font-mono text-[9px] text-white/[0.04] tracking-wider select-none">
-            11001010 00110101 10101100 01111001<br />
-            01010011 01011001 01001110 01010100
-          </div>
-          <div className="absolute -bottom-24 left-8 sm:left-20 font-mono text-[11px] text-accent-cyan/[0.07] tracking-widest select-none">
-            01001011 01000101 01010010 01001110<br />
-            01100101 01101100 00101110 01111000
-          </div>
-          <div className="absolute top-1/2 -translate-y-1/2 -left-52 font-mono text-[8px] text-white/[0.03] tracking-widest hidden md:block select-none">
-            01110011 01111001 01110011<br />
-            01110100 01100101 01101101<br />
-            01110010 01100101 01100001
-          </div>
-          <div className="absolute top-1/2 -translate-y-1/2 -right-52 font-mono text-[8px] text-accent-cyan/[0.05] tracking-widest hidden md:block select-none">
-            01010011 01010000 01000001<br />
-            01010101 01010011 01000001<br />
-            01001110 01001111 01010010
-          </div>
-
+        {/* Ambient watermark behind windows */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
           <div className="relative text-center space-y-2 opacity-25 transition-opacity duration-500 hover:opacity-45">
             <p className="font-mono text-xs tracking-[0.35em] uppercase text-text-main">
               Portfolio OS &bull; Kernel v2.0.1

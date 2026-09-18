@@ -1,8 +1,11 @@
 import { useState, useCallback } from 'react';
 
+// Nuclear Z-Index Solution: Global module-scoped counter completely outside React state
+let globalZIndex = 50;
+
 /**
  * Custom Hook: useWindowManager
- * Manages the multi-window desktop environment state with strictly deterministic, atomic z-index calculation.
+ * Manages the multi-window desktop environment state with global monotonic z-index ordering.
  */
 export function useWindowManager() {
   const [windows, setWindows] = useState([]);
@@ -12,10 +15,11 @@ export function useWindowManager() {
    * Brings a window to the top layer and marks it as active
    */
   const focusWindow = useCallback((id) => {
-    setWindows((prevWindows) => {
-      const nextZ = Math.max(0, ...prevWindows.map((w) => w.zIndex || 0)) + 1;
+    globalZIndex += 1;
+    const nextZ = globalZIndex;
 
-      return prevWindows.map((win) => {
+    setWindows((prevWindows) =>
+      prevWindows.map((win) => {
         if (win.id === id) {
           return {
             ...win,
@@ -24,19 +28,20 @@ export function useWindowManager() {
           };
         }
         return win;
-      });
-    });
+      })
+    );
     setActiveWindowId(id);
   }, []);
 
   /**
    * Opens a window or restores and focuses it if already opened.
-   * Atomically calculates highest zIndex synchronously at injection time.
+   * Atomically calculates highest zIndex synchronously at injection time via globalZIndex.
    */
   const openWindow = useCallback((config) => {
-    setWindows((prevWindows) => {
-      const nextZIndex = Math.max(0, ...prevWindows.map((w) => w.zIndex || 0)) + 1;
+    globalZIndex += 1;
+    const nextZIndex = globalZIndex;
 
+    setWindows((prevWindows) => {
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
         return prevWindows.map((win) =>
@@ -132,10 +137,11 @@ export function useWindowManager() {
    * Toggles maximize/restore state of a window
    */
   const maximizeWindow = useCallback((id) => {
-    setWindows((prev) => {
-      const nextZ = Math.max(0, ...prev.map((w) => w.zIndex || 0)) + 1;
+    globalZIndex += 1;
+    const nextZ = globalZIndex;
 
-      return prev.map((win) => {
+    setWindows((prev) =>
+      prev.map((win) => {
         if (win.id !== id) return win;
 
         if (win.isMaximized) {
@@ -157,8 +163,8 @@ export function useWindowManager() {
             },
           };
         }
-      });
-    });
+      })
+    );
     setActiveWindowId(id);
   }, []);
 
