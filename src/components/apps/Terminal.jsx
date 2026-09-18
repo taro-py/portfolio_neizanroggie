@@ -42,7 +42,7 @@ const SKILLS = [
  * Terminal Component
  * Displays an automated boot sequence and comprehensive interactive shell environment.
  */
-export default function Terminal({ onOpenApp }) {
+export default function Terminal({ onOpenApp, onClose }) {
   const [displayedLogs, setDisplayedLogs] = useState([]);
   const [bootFinished, setBootFinished] = useState(false);
   const [currentDir, setCurrentDir] = useState('~');
@@ -77,6 +77,75 @@ export default function Terminal({ onOpenApp }) {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [displayedLogs, bootFinished, commandHistory]);
 
+  // Tab key autocompletion
+  const handleKeyDown = (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const current = inputCommand;
+      if (!current.trim()) return;
+
+      const baseCommands = [
+        'help',
+        'ls',
+        'cat',
+        'open',
+        'cd',
+        'pwd',
+        'skills',
+        'clear',
+        'date',
+        'exit',
+      ];
+
+      const appNames = [
+        'resume',
+        'about',
+        'projects',
+        'map',
+        'about-me.txt',
+        'ResumeViewer.exe',
+        'Trajectory.map',
+        'Terminal.exe',
+      ];
+
+      const dirNames = ['projects', '~', '..'];
+
+      const parts = current.split(' ');
+      if (parts.length === 1) {
+        // Autocompleting command name
+        const partial = parts[0].toLowerCase();
+        const match = baseCommands.find((c) => c.startsWith(partial));
+        if (match) {
+          if (['open', 'cat', 'cd'].includes(match)) {
+            setInputCommand(`${match} `);
+          } else {
+            setInputCommand(match);
+          }
+        }
+      } else if (parts.length >= 2) {
+        // Autocompleting argument for open, cat, cd
+        const cmd = parts[0].toLowerCase();
+        const partialArg = parts.slice(1).join(' ').toLowerCase();
+
+        let pool = [];
+        if (cmd === 'open') {
+          pool = appNames;
+        } else if (cmd === 'cat') {
+          pool = ['about-me.txt', 'resume', 'projects', 'map'];
+        } else if (cmd === 'cd') {
+          pool = dirNames;
+        }
+
+        const match = pool.find((item) =>
+          item.toLowerCase().startsWith(partialArg)
+        );
+        if (match) {
+          setInputCommand(`${parts[0]} ${match}`);
+        }
+      }
+    }
+  };
+
   const handleCommandSubmit = (e) => {
     e.preventDefault();
     const rawInput = inputCommand.trim();
@@ -94,25 +163,33 @@ export default function Terminal({ onOpenApp }) {
   ls [dir]     :: List files and repositories
   cat <file>   :: Output file contents or launch document
   open <name>  :: Launch application window (e.g. open resume, open map)
-  cd <dir>     :: Change directory (~, /projects, about, resume)
-  pwd          :: Print current working directory
+  cd <dir>     :: Change directory (~, projects, ..)
+  pwd          :: Print current working directory (/home/guest)
   skills       :: Display technical stack and core competencies
   clear        :: Clear terminal screen history
-  date         :: Display current system timestamp`;
+  date         :: Display current system timestamp
+  exit         :: Terminate session and close terminal window`;
         break;
 
       case 'pwd':
-        response = currentDir === '~' ? '/home/neizan' : `/home/neizan/${currentDir.replace('~/', '')}`;
+        response =
+          currentDir === '~'
+            ? '/home/guest'
+            : `/home/guest/${currentDir.replace('~/', '')}`;
         break;
 
       case 'cd':
-        if (!arg || arg === '~' || arg === '/home' || arg === '/home/neizan') {
+        if (!arg || arg === '~' || arg === '/home' || arg === '/home/guest') {
           setCurrentDir('~');
           response = 'Changed directory to ~ (home)';
         } else if (arg === '..' || arg === '../') {
           setCurrentDir('~');
           response = 'Changed directory to ~';
-        } else if (arg === 'projects' || arg === '/projects' || arg === '~/projects') {
+        } else if (
+          arg === 'projects' ||
+          arg === '/projects' ||
+          arg === '~/projects'
+        ) {
           setCurrentDir('~/projects');
           response = 'Changed directory to ~/projects';
         } else if (arg === 'about' || arg === 'resume' || arg === 'map') {
@@ -123,19 +200,23 @@ export default function Terminal({ onOpenApp }) {
         break;
 
       case 'ls':
-        if (currentDir.includes('project') || arg === 'projects' || arg === '/projects') {
+        if (
+          currentDir.includes('project') ||
+          arg === 'projects' ||
+          arg === '/projects'
+        ) {
           response = `total 4 repositories
-drwxr-xr-x 1 neizan neizan  APP-phone-company (C++, OOP)
-drwxr-xr-x 1 neizan neizan  Alpha-Beta-tictactoe (AI, MinMax)
-drwxr-xr-x 1 neizan neizan  Greedy-algorithms-tournament (Algorithms)
-drwxr-xr-x 1 neizan neizan  Numerical-Modeling-on-Python (Data, Math)`;
+drwxr-xr-x 1 guest guest  APP-phone-company (C++, OOP)
+drwxr-xr-x 1 guest guest  Alpha-Beta-tictactoe (AI, MinMax)
+drwxr-xr-x 1 guest guest  Greedy-algorithms-tournament (Algorithms)
+drwxr-xr-x 1 guest guest  Numerical-Modeling-on-Python (Data, Math)`;
         } else {
           response = `total 5 items
--rw-r--r-- 1 neizan neizan 1.2K  about-me.txt
--rwxr-xr-x 1 neizan neizan 840K  ResumeViewer.exe
-drwxr-xr-x 2 neizan neizan 4.0K  projects/
--rwxr-xr-x 1 neizan neizan 512K  Trajectory.map
--rwxr-xr-x 1 neizan neizan 720K  Terminal.exe`;
+-rw-r--r-- 1 guest guest 1.2K  about-me.txt
+-rwxr-xr-x 1 guest guest 840K  ResumeViewer.exe
+drwxr-xr-x 2 guest guest 4.0K  projects/
+-rwxr-xr-x 1 guest guest 512K  Trajectory.map
+-rwxr-xr-x 1 guest guest 720K  Terminal.exe`;
         }
         break;
 
@@ -163,7 +244,8 @@ drwxr-xr-x 2 neizan neizan 4.0K  projects/
 
       case 'about':
         if (onOpenApp) onOpenApp('about');
-        response = 'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway). [Window opened]';
+        response =
+          'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway). [Window opened]';
         break;
 
       case 'clear':
@@ -173,6 +255,14 @@ drwxr-xr-x 2 neizan neizan 4.0K  projects/
 
       case 'date':
         response = new Date().toUTCString();
+        break;
+
+      case 'exit':
+        if (onClose) {
+          onClose();
+          return;
+        }
+        response = 'Terminal session terminated.';
         break;
 
       default:
@@ -244,7 +334,7 @@ drwxr-xr-x 2 neizan neizan 4.0K  projects/
         {commandHistory.map((item, idx) => (
           <div key={idx} className="space-y-0.5 pt-1">
             <div className="flex items-center gap-2 text-slate-200">
-              <span className="text-accent-cyan">neizan@synth-os:{item.dir}$</span>
+              <span className="text-accent-cyan">guest@synth-os:{item.dir}$</span>
               <span>{item.command}</span>
             </div>
             {item.response && (
@@ -260,12 +350,13 @@ drwxr-xr-x 2 neizan neizan 4.0K  projects/
       {bootFinished && (
         <form onSubmit={handleCommandSubmit} className="mt-4 pt-2 border-t border-white/5 flex items-center gap-2">
           <span className="text-accent-cyan font-bold select-none shrink-0">
-            neizan@synth-os:{currentDir}$
+            guest@synth-os:{currentDir}$
           </span>
           <input
             type="text"
             value={inputCommand}
             onChange={(e) => setInputCommand(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="type a command (e.g. ls, open resume, help)..."
             className="flex-1 bg-transparent text-slate-100 outline-none font-mono text-xs placeholder:text-text-main/30"
             autoFocus

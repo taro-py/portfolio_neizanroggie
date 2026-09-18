@@ -58,7 +58,11 @@ I am an aspiring FULL-STACK Software Engineer with a solid foundation in systems
             </p>
             <button
               type="button"
-              onClick={onOpenResume}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenResume();
+              }}
               className="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded bg-accent-cyan/10 border-2 border-accent-cyan text-accent-cyan font-mono text-xs sm:text-sm font-bold tracking-wider hover:bg-accent-cyan hover:text-black hover:shadow-[0_0_25px_rgba(0,229,255,0.6)] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.2)]"
             >
               <span className="group-hover:translate-x-0.5 transition-transform">&gt; VIEW_RESUME.exe</span>

@@ -13,11 +13,7 @@ export function useWindowManager() {
    */
   const focusWindow = useCallback((id) => {
     setWindows((prevWindows) => {
-      const highestZ = prevWindows.reduce(
-        (max, w) => Math.max(max, w.zIndex || 0),
-        20
-      );
-      const nextZ = highestZ + 1;
+      const nextZ = Math.max(0, ...prevWindows.map((w) => w.zIndex || 0)) + 1;
 
       return prevWindows.map((win) => {
         if (win.id === id) {
@@ -34,15 +30,12 @@ export function useWindowManager() {
   }, []);
 
   /**
-   * Opens a window or restores and focuses it if already opened
+   * Opens a window or restores and focuses it if already opened.
+   * Atomically calculates highest zIndex synchronously at injection time.
    */
   const openWindow = useCallback((config) => {
     setWindows((prevWindows) => {
-      const highestZ = prevWindows.reduce(
-        (max, w) => Math.max(max, w.zIndex || 0),
-        20
-      );
-      const nextZIndex = highestZ + 1;
+      const nextZIndex = Math.max(0, ...prevWindows.map((w) => w.zIndex || 0)) + 1;
 
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
@@ -140,11 +133,7 @@ export function useWindowManager() {
    */
   const maximizeWindow = useCallback((id) => {
     setWindows((prev) => {
-      const highestZ = prev.reduce(
-        (max, w) => Math.max(max, w.zIndex || 0),
-        20
-      );
-      const nextZ = highestZ + 1;
+      const nextZ = Math.max(0, ...prev.map((w) => w.zIndex || 0)) + 1;
 
       return prev.map((win) => {
         if (win.id !== id) return win;

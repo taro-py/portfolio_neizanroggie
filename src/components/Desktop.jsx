@@ -31,14 +31,19 @@ export default function Desktop() {
 
   // Function to open the ResumeViewer application with guaranteed top focus
   const handleOpenResume = useCallback(() => {
+    const w = Math.min(window.innerWidth - 40, 720);
+    const h = Math.min(window.innerHeight - 80, 560);
+    const posX = Math.max(30, Math.floor((window.innerWidth - w) / 2) + 30);
+    const posY = Math.max(30, Math.floor((window.innerHeight - 48 - h) / 2) + 20);
+
     openWindow({
       id: 'resume',
       title: 'ResumeViewer.exe',
       icon: 'file-text',
-      size: { width: 720, height: 560 },
+      size: { width: w, height: h },
+      position: { x: posX, y: posY },
     });
-    focusWindow('resume');
-  }, [openWindow, focusWindow]);
+  }, [openWindow]);
 
   // Terminal command bridge to open desktop applications
   const handleOpenAppByName = useCallback(
@@ -54,7 +59,6 @@ export default function Desktop() {
           icon: 'file-text',
           size: { width: 620, height: 490 },
         });
-        focusWindow('about');
         return true;
       } else if (target.includes('project')) {
         openWindow({
@@ -63,7 +67,6 @@ export default function Desktop() {
           icon: 'folder',
           size: { width: 780, height: 500 },
         });
-        focusWindow('projects');
         return true;
       } else if (target.includes('map') || target.includes('trajectory')) {
         openWindow({
@@ -72,12 +75,11 @@ export default function Desktop() {
           icon: 'map',
           size: { width: 760, height: 520 },
         });
-        focusWindow('map');
         return true;
       }
       return false;
     },
-    [handleOpenResume, openWindow, focusWindow]
+    [handleOpenResume, openWindow]
   );
 
   // Desktop shortcut configurations
@@ -194,7 +196,12 @@ export default function Desktop() {
           } else if (win.id === 'resume') {
             appContent = <ResumeViewer onClose={() => closeWindow('resume')} />;
           } else if (win.id === 'terminal') {
-            appContent = <Terminal onOpenApp={handleOpenAppByName} />;
+            appContent = (
+              <Terminal
+                onOpenApp={handleOpenAppByName}
+                onClose={() => closeWindow('terminal')}
+              />
+            );
           } else if (win.id === 'projects') {
             appContent = <ProjectsExplorer />;
           } else if (win.id === 'map') {
