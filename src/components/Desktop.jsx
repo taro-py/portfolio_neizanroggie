@@ -121,13 +121,17 @@ export default function Desktop() {
     if (hasAutoStartedRef.current) return;
     hasAutoStartedRef.current = true;
 
+    const screenW = typeof window !== 'undefined' ? window.innerWidth : 1440;
+    const termX = Math.max(20, Math.floor((screenW / 2) - 620));
+    const aboutX = Math.max(20, Math.floor((screenW / 2) + 20));
+
     // Window 1: Terminal.exe
     openWindow({
       id: 'terminal',
       title: 'Terminal.exe',
       icon: 'terminal',
       size: { width: 600, height: 400 },
-      position: { x: 50, y: 50 },
+      position: { x: termX, y: 100 },
     });
 
     // Window 2: about-me.txt (to the right of terminal)
@@ -136,7 +140,7 @@ export default function Desktop() {
       title: 'about-me.txt',
       icon: 'file-text',
       size: { width: 620, height: 490 },
-      position: { x: 700, y: 50 },
+      position: { x: aboutX, y: 100 },
     });
   }, [openWindow]);
 

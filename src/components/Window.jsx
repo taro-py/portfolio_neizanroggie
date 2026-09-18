@@ -63,13 +63,14 @@ export default function Window({
       disableDragging={windowData.isMaximized}
       enableResizing={!windowData.isMaximized}
       style={{
-        zIndex: windowData.zIndex,
+        zIndex: windowData.zIndex || 10,
         display: windowData.isMinimized ? 'none' : 'block',
       }}
       onMouseDown={() => onFocus(windowData.id)}
       className="select-none"
     >
       <motion.div
+        style={{ zIndex: windowData.zIndex || 10 }}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.16, ease: 'easeOut' }}

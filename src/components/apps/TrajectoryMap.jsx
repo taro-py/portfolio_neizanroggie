@@ -60,9 +60,9 @@ const NODES_LIST = [MILESTONES.nc, MILESTONES.huelva, MILESTONES.stavanger];
  * and exact geographical marker positions.
  */
 export default function TrajectoryMap() {
-  const [hoveredNode, setHoveredNode] = useState(null);
+  const [hoveredNode, setHoveredNode] = useState('stavanger');
 
-  const activeInfo = hoveredNode ? MILESTONES[hoveredNode] : null;
+  const activeInfo = MILESTONES[hoveredNode] || MILESTONES.stavanger;
 
   return (
     <div className="h-full w-full flex flex-col bg-os font-mono select-none overflow-hidden relative">
@@ -150,7 +150,7 @@ export default function TrajectoryMap() {
             />
           </svg>
 
-          {/* Interactive HTML Markers & Anti-Overlap Labels */}
+          {/* Interactive HTML Markers - Pure Pulsing Circles without local labels */}
           {NODES_LIST.map((node) => {
             const isHovered = hoveredNode === node.id;
             const isCurrent = node.id === 'stavanger';
@@ -160,115 +160,79 @@ export default function TrajectoryMap() {
                 key={node.id}
                 className={`absolute -translate-x-1/2 -translate-y-1/2 z-30 ${node.positionClass}`}
                 onMouseEnter={() => setHoveredNode(node.id)}
-                onMouseLeave={() => setHoveredNode(null)}
+                onMouseLeave={() => setHoveredNode('stavanger')}
               >
                 {/* Marker Beacon */}
                 <div className="relative flex items-center justify-center cursor-pointer p-2">
                   {isCurrent ? (
                     <>
                       <span className="animate-ping absolute w-8 h-8 rounded-full bg-accent-cyan/40 opacity-75" />
-                      <span className="w-5 h-5 rounded-full bg-accent-cyan/25 border-2 border-accent-cyan flex items-center justify-center shadow-[0_0_18px_#00E5FF]">
+                      <span
+                        className={`w-5 h-5 rounded-full bg-accent-cyan/25 border-2 border-accent-cyan flex items-center justify-center transition-all duration-200 ${
+                          isHovered
+                            ? 'shadow-[0_0_24px_#00E5FF] scale-110'
+                            : 'shadow-[0_0_16px_#00E5FF]'
+                        }`}
+                      >
                         <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
                       </span>
                     </>
                   ) : (
                     <>
                       <span className="animate-pulse absolute w-6 h-6 rounded-full bg-accent-purple/30" />
-                      <span className="w-4 h-4 rounded-full bg-accent-purple/20 border-2 border-accent-purple flex items-center justify-center shadow-[0_0_12px_#9D4EDD]">
+                      <span
+                        className={`w-4 h-4 rounded-full bg-accent-purple/20 border-2 border-accent-purple flex items-center justify-center transition-all duration-200 ${
+                          isHovered
+                            ? 'shadow-[0_0_20px_#9D4EDD] scale-110'
+                            : 'shadow-[0_0_12px_#9D4EDD]'
+                        }`}
+                      >
                         <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
                       </span>
                     </>
                   )}
                 </div>
-
-                {/* Directional Label Badge */}
-                {node.labelDirection === 'above' ? (
-                  /* Stavanger: Positioned ABOVE the marker */
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 flex flex-col items-center pointer-events-none select-none">
-                    <div
-                      className={`px-2.5 py-1 rounded-md border backdrop-blur-md shadow-xl text-center whitespace-nowrap transition-colors duration-150 ${
-                        isHovered
-                          ? 'bg-[#0d0e17] border-accent-cyan text-accent-cyan shadow-[0_0_16px_rgba(0,229,255,0.4)]'
-                          : 'bg-[#0d0e17]/90 border-accent-cyan/50 text-slate-200'
-                      }`}
-                    >
-                      <p className="font-bold text-[11px] sm:text-xs text-accent-cyan flex items-center justify-center gap-1.5">
-                        <span>{node.city}</span>
-                        <span className="text-[10px] text-slate-300 font-normal">[{node.coords}]</span>
-                      </p>
-                      <p className="text-[10px] text-slate-300 font-mono">Current Location &bull; UiS (Year 4)</p>
-                    </div>
-                    <div className="w-0.5 h-2 bg-accent-cyan/40" />
-                  </div>
-                ) : (
-                  /* Huelva & North Carolina: Positioned BELOW the marker */
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2.5 flex flex-col items-center pointer-events-none select-none">
-                    <div className="w-0.5 h-2 bg-accent-purple/40" />
-                    <div
-                      className={`px-2.5 py-1 rounded-md border backdrop-blur-md shadow-xl text-center whitespace-nowrap transition-colors duration-150 ${
-                        isHovered
-                          ? 'bg-[#0d0e17] border-accent-purple text-slate-100 shadow-[0_0_16px_rgba(157,78,221,0.4)]'
-                          : 'bg-[#0d0e17]/90 border-white/15 text-slate-300'
-                      }`}
-                    >
-                      <p className="font-bold text-[11px] sm:text-xs text-slate-100 flex items-center justify-center gap-1.5">
-                        <span>{node.city}</span>
-                        <span className="text-[10px] text-text-main/70 font-normal">[{node.coords}]</span>
-                      </p>
-                      <p className="text-[10px] text-accent-purple font-mono">
-                        {node.id === 'huelva' ? 'BSc Computer Engineering' : '321 Carpet & Flooring'}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
 
-        {/* Conditional Hover Milestone Detail Panel (only visible when hoveredNode is active) */}
-        {hoveredNode && activeInfo ? (
-          <div className="w-full max-w-[900px] mt-3 p-3.5 rounded-lg bg-window/95 border border-white/10 backdrop-blur-md z-20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xl animate-in fade-in duration-150">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-[9px] font-bold px-2 py-0.5 rounded border ${
-                    activeInfo.color === 'cyan'
-                      ? 'bg-accent-cyan/15 text-accent-cyan border-accent-cyan/40 shadow-[0_0_8px_rgba(0,229,255,0.3)]'
-                      : 'bg-accent-purple/15 text-accent-purple border-accent-purple/40'
-                  }`}
-                >
-                  {activeInfo.tag}
-                </span>
-                <h4 className="font-bold text-slate-100 text-xs sm:text-sm">
-                  {activeInfo.title}
-                </h4>
-              </div>
-              <p className="text-xs text-slate-300">
-                <span className="text-accent-cyan font-medium">
-                  {activeInfo.city}, {activeInfo.country}
-                </span>{' '}
-                &bull; {activeInfo.role}{' '}
-                {activeInfo.institution && (
-                  <>&bull; <span className="text-text-main/70">{activeInfo.institution}</span></>
-                )}
-              </p>
-              <p className="text-[11px] text-text-main/80 leading-snug">
-                {activeInfo.desc}
-              </p>
+        {/* Persistent Milestone Detail HUD Panel (defaults to Stavanger, updates on hover) */}
+        <div className="w-full max-w-[900px] mt-3 p-3.5 rounded-lg bg-window/95 border border-white/10 backdrop-blur-md z-20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xl transition-all duration-200">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-[9px] font-bold px-2 py-0.5 rounded border ${
+                  activeInfo.color === 'cyan'
+                    ? 'bg-accent-cyan/15 text-accent-cyan border-accent-cyan/40 shadow-[0_0_8px_rgba(0,229,255,0.3)]'
+                    : 'bg-accent-purple/15 text-accent-purple border-accent-purple/40'
+                }`}
+              >
+                {activeInfo.tag}
+              </span>
+              <h4 className="font-bold text-slate-100 text-xs sm:text-sm">
+                {activeInfo.title}
+              </h4>
             </div>
+            <p className="text-xs text-slate-300">
+              <span className="text-accent-cyan font-medium">
+                {activeInfo.city}, {activeInfo.country}
+              </span>{' '}
+              &bull; {activeInfo.role}{' '}
+              {activeInfo.institution && (
+                <>&bull; <span className="text-text-main/70">{activeInfo.institution}</span></>
+              )}
+            </p>
+            <p className="text-[11px] text-text-main/80 leading-snug">
+              {activeInfo.desc}
+            </p>
+          </div>
 
-            <div className="text-left sm:text-right text-[10px] text-text-main/60 font-mono shrink-0">
-              <p className="text-emerald-400 font-semibold">{activeInfo.coords}</p>
-              <p className="text-slate-400">{activeInfo.period}</p>
-            </div>
+          <div className="text-left sm:text-right text-[10px] text-text-main/60 font-mono shrink-0">
+            <p className="text-emerald-400 font-semibold">{activeInfo.coords}</p>
+            <p className="text-slate-400">{activeInfo.period}</p>
           </div>
-        ) : (
-          /* Subtle helper placeholder when idle */
-          <div className="w-full max-w-[900px] mt-3 p-2.5 rounded-lg bg-window/40 border border-white/5 text-center text-[11px] text-text-main/50 font-mono">
-            // Hover over any geographic marker to view detailed career milestone info
-          </div>
-        )}
+        </div>
 
         {/* Global Trajectory Flow Indicator */}
         <div className="w-full max-w-[900px] mt-2 flex items-center justify-between gap-2 px-1 text-[10px] font-mono text-text-main/60">
