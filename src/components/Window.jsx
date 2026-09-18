@@ -67,8 +67,9 @@ export default function Window({
       minHeight={180}
       disableDragging={windowData.isMaximized}
       enableResizing={!windowData.isMaximized}
+      z={windowData.zIndex || 50}
       style={{
-        zIndex: windowData.zIndex || 10,
+        zIndex: windowData.zIndex || 50,
         display: windowData.isMinimized ? 'none' : 'block',
         ...(windowData.isMaximized
           ? {
@@ -96,7 +97,7 @@ export default function Window({
         onMouseDownCapture={bringToFrontHandler}
         onMouseDown={bringToFrontHandler}
         style={{
-          zIndex: windowData.zIndex || 10,
+          zIndex: windowData.zIndex || 50,
           ...(windowData.isMaximized
             ? {
                 top: 0,

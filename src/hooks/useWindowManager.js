@@ -1,34 +1,32 @@
 import { useState, useCallback } from 'react';
 
 // Custom Hook: useWindowManager
-// Uses zIndex: Date.now() to ensure the latest touched or opened window always has the topmost layer.
+// Uses incremental zIndex starting from 50 to strictly obey CSS stacking rules without 32-bit integer overflow.
+let zCounter = 50;
+const getNextZIndex = () => ++zCounter;
+
 export function useWindowManager() {
   const [windows, setWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
 
   /**
    * Brings a window to the top layer and marks it as active
-   * Guaranteed to assign zIndex: Date.now() strictly higher than any other window
+   * Assigns a strictly incremented zIndex so CSS always places it in front
    */
   const focusWindow = useCallback((id) => {
-    setWindows((prevWindows) => {
-      const highestZ = prevWindows.reduce(
-        (max, w) => Math.max(max, w.zIndex || 0),
-        0
-      );
-      const newZ = Math.max(Date.now(), highestZ + 1);
-
-      return prevWindows.map((win) => {
+    const nextZ = getNextZIndex();
+    setWindows((prevWindows) =>
+      prevWindows.map((win) => {
         if (win.id === id) {
           return {
             ...win,
-            zIndex: newZ,
+            zIndex: nextZ,
             isMinimized: false,
           };
         }
         return win;
-      });
-    });
+      })
+    );
     setActiveWindowId(id);
   }, []);
 
@@ -36,15 +34,15 @@ export function useWindowManager() {
 
   /**
    * Opens a window or restores and focuses it if already opened.
-   * Uses zIndex: Date.now() so it always gets the highest timestamp.
    */
   const openWindow = useCallback((config) => {
+    const nextZ = getNextZIndex();
     setWindows((prevWindows) => {
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
         return prevWindows.map((win) =>
           win.id === config.id
-            ? { ...win, isMinimized: false, zIndex: Date.now() }
+            ? { ...win, isMinimized: false, zIndex: nextZ }
             : win
         );
       }
@@ -70,7 +68,7 @@ export function useWindowManager() {
         position: initialPos,
         prevBounds: { size: initialSize, position: initialPos },
         content: config.content || null,
-        zIndex: Date.now(),
+        zIndex: config.zIndex || nextZ,
       };
 
       return [...prevWindows, newWindow];
@@ -135,6 +133,7 @@ export function useWindowManager() {
    * Toggles maximize/restore state of a window
    */
   const maximizeWindow = useCallback((id) => {
+    const nextZ = getNextZIndex();
     setWindows((prev) =>
       prev.map((win) => {
         if (win.id !== id) return win;
@@ -143,7 +142,7 @@ export function useWindowManager() {
           return {
             ...win,
             isMaximized: false,
-            zIndex: Date.now(),
+            zIndex: nextZ,
             size: win.prevBounds.size,
             position: win.prevBounds.position,
           };
@@ -151,7 +150,7 @@ export function useWindowManager() {
           return {
             ...win,
             isMaximized: true,
-            zIndex: Date.now(),
+            zIndex: nextZ,
             prevBounds: {
               size: win.size,
               position: win.position,
