@@ -23,6 +23,7 @@ export default function Desktop() {
     minimizeWindow,
     maximizeWindow,
     focusWindow,
+    bringToFront,
     updateWindowPosition,
     updateWindowSize,
   } = useWindowManager();
@@ -220,6 +221,7 @@ export default function Desktop() {
               windowData={win}
               isActive={win.id === activeWindowId}
               onFocus={focusWindow}
+              bringToFront={bringToFront}
               onClose={closeWindow}
               onMinimize={minimizeWindow}
               onMaximize={maximizeWindow}

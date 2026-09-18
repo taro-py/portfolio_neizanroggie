@@ -8,22 +8,31 @@ export function useWindowManager() {
 
   /**
    * Brings a window to the top layer and marks it as active
+   * Guaranteed to assign zIndex: Date.now() strictly higher than any other window
    */
   const focusWindow = useCallback((id) => {
-    setWindows((prevWindows) =>
-      prevWindows.map((win) => {
+    setWindows((prevWindows) => {
+      const highestZ = prevWindows.reduce(
+        (max, w) => Math.max(max, w.zIndex || 0),
+        0
+      );
+      const newZ = Math.max(Date.now(), highestZ + 1);
+
+      return prevWindows.map((win) => {
         if (win.id === id) {
           return {
             ...win,
-            zIndex: Date.now(),
+            zIndex: newZ,
             isMinimized: false,
           };
         }
         return win;
-      })
-    );
+      });
+    });
     setActiveWindowId(id);
   }, []);
+
+  const bringToFront = focusWindow;
 
   /**
    * Opens a window or restores and focuses it if already opened.
@@ -180,6 +189,7 @@ export function useWindowManager() {
     minimizeWindow,
     maximizeWindow,
     focusWindow,
+    bringToFront,
     updateWindowPosition,
     updateWindowSize,
   };

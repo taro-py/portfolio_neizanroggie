@@ -15,9 +15,9 @@ const MILESTONES = {
     coords: '37.26° N, 6.94° W',
     period: 'Foundations (Years 1-3)',
     color: 'purple',
-    positionClass: 'top-[41%] left-[47.5%]',
+    positionClass: 'top-[29%] left-[46.5%]',
     labelDirection: 'below',
-    svgPos: { x: 475, y: 410 },
+    svgPos: { x: 465, y: 290 },
   },
   nc: {
     id: 'nc',
@@ -32,9 +32,9 @@ const MILESTONES = {
     coords: '35.76° N, 79.02° W',
     period: 'Summer Work Experience',
     color: 'emerald',
-    positionClass: 'top-[42%] left-[26%]',
+    positionClass: 'top-[30%] left-[27.5%]',
     labelDirection: 'below',
-    svgPos: { x: 260, y: 420 },
+    svgPos: { x: 275, y: 300 },
   },
   stavanger: {
     id: 'stavanger',
@@ -49,9 +49,9 @@ const MILESTONES = {
     coords: '58.97° N, 5.73° E',
     period: 'Active Academic Term (Year 4)',
     color: 'cyan',
-    positionClass: 'top-[28%] left-[50.5%]',
+    positionClass: 'top-[15%] left-[51%]',
     labelDirection: 'above',
-    svgPos: { x: 505, y: 280 },
+    svgPos: { x: 510, y: 150 },
   },
 };
 
@@ -203,9 +203,9 @@ export default function TrajectoryMap({
           </g>
 
           {/* Precision Flight Arcs originating from Huelva */}
-          {/* Arc 1: Huelva (475, 410) -> North Carolina (260, 420) [Purple to Emerald] */}
+          {/* Arc 1: Huelva (465, 290) -> North Carolina (275, 300) [Purple to Emerald] */}
           <path
-            d="M 475 410 Q 365 270 260 420"
+            d="M 465 290 Q 370 200 275 300"
             fill="none"
             stroke="url(#arcHuelvaToNC)"
             strokeWidth="2.5"
@@ -214,9 +214,9 @@ export default function TrajectoryMap({
             className="opacity-90"
           />
 
-          {/* Arc 2: Huelva (475, 410) -> Stavanger (505, 280) [Purple to Cyan] */}
+          {/* Arc 2: Huelva (465, 290) -> Stavanger (510, 150) [Purple to Cyan] */}
           <path
-            d="M 475 410 Q 460 325 505 280"
+            d="M 465 290 Q 487 220 510 150"
             fill="none"
             stroke="url(#arcHuelvaToStavanger)"
             strokeWidth="2.8"
