@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import Taskbar from './Taskbar';
 import Window from './Window';
 import DesktopIcon from './DesktopIcon';
 import Notepad from './apps/Notepad';
 import Terminal from './apps/Terminal';
+import ResumeViewer from './apps/ResumeViewer';
 import { useWindowManager } from '../hooks/useWindowManager';
 
 /**
  * Desktop Component
  * Main viewport container and workspace orchestrator.
- * Renders desktop icons, manages multiple draggable/resizable windows with exact maximize bounds,
- * autostarts about-me.txt, and anchors the Taskbar.
+ * Renders desktop shortcuts, coordinates open applications, and anchors the Taskbar.
  */
 export default function Desktop() {
   const {
@@ -25,32 +25,53 @@ export default function Desktop() {
     updateWindowSize,
   } = useWindowManager();
 
+  const hasAutoStartedRef = useRef(false);
+
+  // Function to open the ResumeViewer application
+  const handleOpenResume = useCallback(() => {
+    openWindow({
+      id: 'resume',
+      title: 'ResumeViewer.exe',
+      icon: 'file-text',
+      size: { width: 720, height: 560 },
+    });
+  }, [openWindow]);
+
   // Desktop shortcut configurations
   const desktopShortcuts = [
     {
       id: 'about',
       title: 'about-me.txt',
       icon: 'file-text',
-      size: { width: 580, height: 460 },
+      size: { width: 620, height: 490 },
+    },
+    {
+      id: 'resume',
+      title: 'ResumeViewer.exe',
+      icon: 'file-text',
+      size: { width: 720, height: 560 },
     },
     {
       id: 'terminal',
       title: 'Terminal.exe',
       icon: 'terminal',
-      size: { width: 660, height: 430 },
+      size: { width: 660, height: 440 },
     },
     {
       id: 'projects',
-      title: 'Carpeta',
+      title: 'Projects',
       icon: 'folder',
       size: { width: 560, height: 380 },
     },
   ];
 
-  // Autostart about-me.txt centered on initial page load
+  // Autostart about-me.txt centered on initial page load (guaranteed single execution)
   useEffect(() => {
-    const initialWidth = Math.min(window.innerWidth - 40, 580);
-    const initialHeight = Math.min(window.innerHeight - 90, 460);
+    if (hasAutoStartedRef.current) return;
+    hasAutoStartedRef.current = true;
+
+    const initialWidth = Math.min(window.innerWidth - 40, 620);
+    const initialHeight = Math.min(window.innerHeight - 90, 490);
     const posX = Math.max(20, Math.floor((window.innerWidth - initialWidth) / 2));
     const posY = Math.max(20, Math.floor((window.innerHeight - 48 - initialHeight) / 2));
 
@@ -81,14 +102,14 @@ export default function Desktop() {
         aria-hidden="true"
       />
 
-      {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) with no padding */}
+      {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) */}
       <div
         id="desktop-workspace"
         className="relative z-10 w-full h-[calc(100vh-48px)] overflow-hidden"
       >
-        {/* Desktop Icons Grid (Positioned in top-left) */}
+        {/* Desktop Icons Grid (Top-Left) */}
         <section
-          aria-label="Iconos del escritorio"
+          aria-label="Desktop shortcuts"
           className="absolute top-5 left-5 inline-flex flex-col gap-4 z-0 pointer-events-auto"
         >
           {desktopShortcuts.map((shortcut) => (
@@ -120,7 +141,9 @@ export default function Desktop() {
         {windows.map((win) => {
           let appContent = null;
           if (win.id === 'about') {
-            appContent = <Notepad />;
+            appContent = <Notepad onOpenResume={handleOpenResume} />;
+          } else if (win.id === 'resume') {
+            appContent = <ResumeViewer onClose={() => closeWindow('resume')} />;
           } else if (win.id === 'terminal') {
             appContent = <Terminal />;
           }
@@ -154,7 +177,7 @@ export default function Desktop() {
             id: 'terminal',
             title: 'Terminal.exe',
             icon: 'terminal',
-            size: { width: 660, height: 430 },
+            size: { width: 660, height: 440 },
           })
         }
       />

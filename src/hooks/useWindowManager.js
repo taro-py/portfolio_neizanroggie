@@ -2,12 +2,12 @@ import { useState, useCallback } from 'react';
 
 /**
  * Custom Hook: useWindowManager
- * Manages the multi-window desktop environment state (open, close, focus, minimize, maximize, z-index).
+ * Manages the multi-window desktop environment state with stable callbacks.
  */
 export function useWindowManager() {
   const [windows, setWindows] = useState([]);
   const [activeWindowId, setActiveWindowId] = useState(null);
-  const [topZIndex, setTopZIndex] = useState(20);
+  const [, setTopZIndex] = useState(20);
 
   /**
    * Brings a window to the top layer and marks it as active
@@ -36,13 +36,19 @@ export function useWindowManager() {
    * Opens a window or restores and focuses it if already opened
    */
   const openWindow = useCallback((config) => {
+    let nextZIndex = 21;
+    setTopZIndex((prev) => {
+      nextZIndex = prev + 1;
+      return nextZIndex;
+    });
+
     setWindows((prevWindows) => {
       const existing = prevWindows.find((w) => w.id === config.id);
       if (existing) {
-        // If it already exists, restore it and focus
-        focusWindow(config.id);
         return prevWindows.map((win) =>
-          win.id === config.id ? { ...win, isMinimized: false } : win
+          win.id === config.id
+            ? { ...win, isMinimized: false, zIndex: nextZIndex }
+            : win
         );
       }
 
@@ -59,7 +65,7 @@ export function useWindowManager() {
 
       const newWindow = {
         id: config.id,
-        title: config.title || 'Nueva Ventana',
+        title: config.title || 'New Window',
         icon: config.icon || 'terminal',
         isMinimized: false,
         isMaximized: false,
@@ -67,15 +73,14 @@ export function useWindowManager() {
         position: initialPos,
         prevBounds: { size: initialSize, position: initialPos },
         content: config.content || null,
-        zIndex: topZIndex + 1,
+        zIndex: nextZIndex,
       };
-
-      setTopZIndex((z) => z + 1);
-      setActiveWindowId(config.id);
 
       return [...prevWindows, newWindow];
     });
-  }, [focusWindow, topZIndex]);
+
+    setActiveWindowId(config.id);
+  }, []);
 
   /**
    * Closes and removes a window
@@ -84,22 +89,23 @@ export function useWindowManager() {
     setWindows((prev) => {
       const remaining = prev.filter((w) => w.id !== id);
 
-      // Determine next active window
-      if (activeWindowId === id) {
-        const visibleRemaining = remaining.filter((w) => !w.isMinimized);
-        if (visibleRemaining.length > 0) {
-          const topmost = visibleRemaining.reduce((highest, current) =>
-            current.zIndex > highest.zIndex ? current : highest
-          );
-          setActiveWindowId(topmost.id);
-        } else {
-          setActiveWindowId(null);
+      setActiveWindowId((currentActive) => {
+        if (currentActive === id) {
+          const visible = remaining.filter((w) => !w.isMinimized);
+          if (visible.length > 0) {
+            const topmost = visible.reduce((highest, current) =>
+              current.zIndex > highest.zIndex ? current : highest
+            );
+            return topmost.id;
+          }
+          return null;
         }
-      }
+        return currentActive;
+      });
 
       return remaining;
     });
-  }, [activeWindowId]);
+  }, []);
 
   /**
    * Minimizes a window and passes focus to the next topmost visible window
@@ -110,33 +116,34 @@ export function useWindowManager() {
         win.id === id ? { ...win, isMinimized: true } : win
       );
 
-      // Change active window if minimized window was active
-      if (activeWindowId === id) {
-        const visible = updated.filter((w) => !w.isMinimized);
-        if (visible.length > 0) {
-          const topmost = visible.reduce((highest, current) =>
-            current.zIndex > highest.zIndex ? current : highest
-          );
-          setActiveWindowId(topmost.id);
-        } else {
-          setActiveWindowId(null);
+      setActiveWindowId((currentActive) => {
+        if (currentActive === id) {
+          const visible = updated.filter((w) => !w.isMinimized);
+          if (visible.length > 0) {
+            const topmost = visible.reduce((highest, current) =>
+              current.zIndex > highest.zIndex ? current : highest
+            );
+            return topmost.id;
+          }
+          return null;
         }
-      }
+        return currentActive;
+      });
 
       return updated;
     });
-  }, [activeWindowId]);
+  }, []);
 
   /**
    * Toggles maximize/restore state of a window
    */
   const maximizeWindow = useCallback((id) => {
+    focusWindow(id);
     setWindows((prev) =>
       prev.map((win) => {
         if (win.id !== id) return win;
 
         if (win.isMaximized) {
-          // Restore previous size and position
           return {
             ...win,
             isMaximized: false,
@@ -144,7 +151,6 @@ export function useWindowManager() {
             position: win.prevBounds.position,
           };
         } else {
-          // Save current bounds and maximize
           return {
             ...win,
             isMaximized: true,
@@ -156,7 +162,6 @@ export function useWindowManager() {
         }
       })
     );
-    focusWindow(id);
   }, [focusWindow]);
 
   /**

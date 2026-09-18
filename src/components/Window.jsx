@@ -115,9 +115,13 @@ export default function Window({
             {/* Minimize Button */}
             <button
               type="button"
-              onClick={() => onMinimize(windowData.id)}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95"
-              title="Minimizar"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMinimize(windowData.id);
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              title="Minimize"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
@@ -125,9 +129,13 @@ export default function Window({
             {/* Maximize / Restore Button */}
             <button
               type="button"
-              onClick={() => onMaximize(windowData.id)}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95"
-              title={windowData.isMaximized ? 'Restaurar' : 'Maximizar'}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMaximize(windowData.id);
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              title={windowData.isMaximized ? 'Restore' : 'Maximize'}
             >
               {windowData.isMaximized ? (
                 <Copy className="w-3 h-3 rotate-180" />
@@ -139,9 +147,13 @@ export default function Window({
             {/* Close Button */}
             <button
               type="button"
-              onClick={() => onClose(windowData.id)}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95"
-              title="Cerrar"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose(windowData.id);
+              }}
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer"
+              title="Close"
             >
               <X className="w-3.5 h-3.5" />
             </button>

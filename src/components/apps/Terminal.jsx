@@ -14,25 +14,25 @@ const BOOT_LOGS = [
 const SKILLS = [
   {
     name: 'React',
-    desc: 'React 19, Hooks avanzados, arquitectura de componentes, virtual DOM',
+    desc: 'React 19, Advanced Hooks, Component Architecture, Virtual DOM',
     tag: 'CORE FRONTEND',
     accent: 'text-accent-cyan border-accent-cyan/40 bg-accent-cyan/10',
   },
   {
     name: 'Tailwind CSS',
-    desc: 'Sistemas de diseño a medida, estética cyberpunk/synth, responsive layout',
+    desc: 'Custom Design Systems, Cyberpunk/Synth Palettes, Responsive UI',
     tag: 'STYLING',
     accent: 'text-cyan-400 border-cyan-400/40 bg-cyan-400/10',
   },
   {
     name: 'JavaScript',
-    desc: 'ESNext, código asíncrono, modularidad, manipulación fluida de APIs',
+    desc: 'Modern ESNext, Asynchronous Programming, Modularity, Web APIs',
     tag: 'LANGUAGE',
     accent: 'text-amber-400 border-amber-400/40 bg-amber-400/10',
   },
   {
     name: 'Git',
-    desc: 'Control de versiones profesional, flujos GitFlow, CI/CD y despliegues',
+    desc: 'Version Control, GitFlow, Branching Workflows, CI/CD Integration',
     tag: 'WORKFLOW',
     accent: 'text-accent-purple border-accent-purple/40 bg-accent-purple/10',
   },
@@ -83,11 +83,11 @@ export default function Terminal() {
 
     let response = '';
     if (cmd === 'help') {
-      response = 'Comandos disponibles: help, skills, about, clear, date';
+      response = 'Available commands: help, skills, about, clear, date';
     } else if (cmd === 'skills') {
-      response = 'Skills principales: React, Tailwind CSS, JavaScript, Git.';
+      response = 'Core Skills: React, Tailwind CSS, JavaScript, Git.';
     } else if (cmd === 'about') {
-      response = 'Neizan Roggie - Desarrollador Frontend Internacional (España, USA, Noruega).';
+      response = 'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway).';
     } else if (cmd === 'clear') {
       setCommandHistory([]);
       setInputCommand('');
@@ -95,7 +95,7 @@ export default function Terminal() {
     } else if (cmd === 'date') {
       response = new Date().toString();
     } else {
-      response = `synth-sh: comando no reconocido: '${cmd}'. Escribe 'help' para ver la lista.`;
+      response = `synth-sh: command not found: '${cmd}'. Type 'help' to see the command list.`;
     }
 
     setCommandHistory((prev) => [...prev, { command: inputCommand, response }]);
@@ -108,7 +108,7 @@ export default function Terminal() {
         {/* Terminal Header Banner */}
         <div className="flex items-center gap-2 text-accent-cyan/80 pb-2 border-b border-white/5 select-none">
           <TerminalIcon className="w-4 h-4 text-accent-cyan" />
-          <span className="font-semibold tracking-wider">NEIZAN_ROGIE // TERMINAL INTERACTIVA</span>
+          <span className="font-semibold tracking-wider">NEIZAN_ROGGIE // INTERACTIVE TERMINAL</span>
         </div>
 
         {/* Boot Sequence Logs */}
@@ -125,7 +125,7 @@ export default function Terminal() {
           <div className="pt-3 space-y-3 animate-in fade-in duration-500">
             <div className="flex items-center gap-2 text-slate-200 font-semibold tracking-wide border-t border-white/10 pt-3">
               <Sparkles className="w-3.5 h-3.5 text-accent-cyan" />
-              <span>HABILIDADES Y TECNOLOGÍAS PRINCIPALES:</span>
+              <span>CORE SKILLS &amp; TECHNOLOGIES:</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -150,7 +150,7 @@ export default function Terminal() {
             </div>
 
             <p className="text-[11px] text-text-main/50 italic pt-1">
-              Escribe 'help' en el prompt para ver comandos disponibles.
+              Type 'help' in the prompt to view available commands.
             </p>
           </div>
         )}
@@ -181,7 +181,7 @@ export default function Terminal() {
             type="text"
             value={inputCommand}
             onChange={(e) => setInputCommand(e.target.value)}
-            placeholder="escribe un comando..."
+            placeholder="type a command..."
             className="flex-1 bg-transparent text-slate-100 outline-none font-mono text-xs placeholder:text-text-main/30"
             autoFocus
           />

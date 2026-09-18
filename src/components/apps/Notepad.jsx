@@ -1,84 +1,84 @@
+import { FileText, ArrowUpRight } from 'lucide-react';
+
 /**
  * Notepad Component (about-me.txt)
- * Simulates a classic OS text editor with Synth-OS aesthetics, showing Neizan Roggie's bio.
+ * Classic OS text editor with Synth-OS aesthetics, showing Neizan Roggie's verified software engineer profile.
  */
-export default function Notepad() {
-  const fileContent = `============================================================
-ABOUT_ME.TXT - PERFIL DE DESARROLLADOR
-Autor: Neizan Roggie
-Entorno: Synth-OS v1.0
-============================================================
+export default function Notepad({ onOpenResume }) {
+  const content = `4th-Year Software Engineering Student | University of Huelva (UHU) & Universitetet i Stavanger (UiS)
 
-¡Hola! 👋
+I am an aspiring FULL-STACK Software Engineer with a solid foundation in systems development, networking, AI and Data.
 
-Soy Neizan Roggie, estudiante de desarrollo web con trayectoria
-internacional que abarca experiencias formativas en España, Estados
-Unidos y Noruega.
+--- My Technical Stack ---
 
-Esta vivencia multicultural me ha otorgado una gran adaptabilidad,
-visión global y una metodología de trabajo orientada a la resolución
-eficiente de problemas.
+[Development and tools]
+- Languages: C++, C, Java, Python, SQL, GO.
+- IDE'S: Cursor, Visual Studio, PyCharm, Code::Blocks, Eclipse, Antigravity, Apache, Oracle, DBeaver, Figma.
+- Specialties: Data Structures, Complexity Analysis (Big O), Object-Oriented Programming (OOP), Concurrency, Software Design Patterns, and API Development.
+- AI: Agent development and Artificial Intelligence-oriented algorithms.
 
-------------------------------------------------------------
-🚀 LO QUE ME APASIONA
-------------------------------------------------------------
-Me apasiona crear interfaces interactivas, modernas y escalables.
-Disfruto explorando nuevos paradigmas frontend (como este entorno
-de Sistema Operativo en el navegador), optimizando la fluidez de
-las animaciones y cuidando cada microinteracción visual.
+[Infrastructure and Networking]
+- Systems: Ubuntu, Kali Linux, Arch Linux, MAC, Windows.
+- Networking: Topology configuration (Cisco), traffic analysis (Wireshark), and remote management (PuTTY).
+- Databases: Database design and management, including complex queries and cursors.
 
-------------------------------------------------------------
-🌍 TRAYECTORIA INTERNACIONAL
-------------------------------------------------------------
-• 🇪🇸 España: Raíces formativas en ingeniería y desarrollo web moderno.
-• 🇺🇸 Estados Unidos: Inmersión lingüística, visión de producto y diseño ágil.
-• 🇳🇴 Noruega: Estándares de calidad de código, disciplina y pensamiento analítico.
-
-------------------------------------------------------------
-🎯 OBJETIVO PROFESIONAL
-------------------------------------------------------------
-Contribuir en proyectos tecnológicos desafiantes donde pueda aportar
-valor construyendo experiencias de usuario de clase mundial con React,
-arquitectura limpia y tecnologías de vanguardia.
-
-[EOF - Fin del documento]`;
+[Cybersecurity]
+- Continuous self-taught learning in information security, applying networking and systems concepts to build more robust software, as well as finding vulnerabilities in Linux systems and servers.`;
 
   return (
     <div className="h-full w-full flex flex-col bg-os font-mono select-text">
-      {/* Notepad Menu Bar */}
+      {/* Notepad Menu Bar (English) */}
       <div className="h-7 px-3 bg-window/80 border-b border-white/5 flex items-center gap-4 text-xs text-text-main/80 select-none">
         <button type="button" className="hover:text-accent-cyan transition-colors">
-          Archivo
+          File
         </button>
         <button type="button" className="hover:text-accent-cyan transition-colors">
-          Edición
+          Edit
         </button>
         <button type="button" className="hover:text-accent-cyan transition-colors">
-          Formato
+          Format
         </button>
         <button type="button" className="hover:text-accent-cyan transition-colors">
-          Ver
+          View
         </button>
         <button type="button" className="hover:text-accent-cyan transition-colors">
-          Ayuda
+          Help
         </button>
       </div>
 
       {/* Editor Content Area */}
-      <div className="flex-1 p-4 overflow-auto text-xs sm:text-[13px] leading-relaxed text-slate-200 selection:bg-accent-cyan/25 selection:text-accent-cyan">
-        <pre className="font-mono whitespace-pre-wrap break-words">{fileContent}</pre>
+      <div className="flex-1 p-5 overflow-auto text-xs sm:text-[13px] leading-relaxed text-slate-200 selection:bg-accent-cyan/25 selection:text-accent-cyan">
+        <pre className="font-mono whitespace-pre-wrap break-words">{content}</pre>
+
+        {/* Interactive Glowing Resume Button */}
+        <div className="mt-8 pt-6 border-t border-white/10 select-none">
+          <p className="text-[11px] text-text-main/60 mb-2 font-mono">
+            // Execute command to inspect verified credentials:
+          </p>
+          <button
+            type="button"
+            onClick={onOpenResume}
+            className="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded bg-accent-cyan/10 border-2 border-accent-cyan text-accent-cyan font-mono text-xs sm:text-sm font-bold tracking-wider hover:bg-accent-cyan hover:text-black hover:shadow-[0_0_25px_rgba(0,229,255,0.6)] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_15px_rgba(0,229,255,0.2)]"
+          >
+            <span className="group-hover:translate-x-0.5 transition-transform">&gt; VIEW_RESUME.exe</span>
+            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </button>
+        </div>
       </div>
 
-      {/* Notepad Status Bar */}
+      {/* Notepad Status Bar (English) */}
       <div className="h-6 px-3 bg-window/60 border-t border-white/5 flex items-center justify-between text-[11px] text-text-main/60 select-none">
         <div className="flex items-center gap-4">
-          <span>Línea 36, Columna 1</span>
-          <span>Caracteres: {fileContent.length}</span>
+          <span className="flex items-center gap-1.5">
+            <FileText className="w-3 h-3 text-accent-cyan/70" />
+            Ln 26, Col 1
+          </span>
+          <span>UTF-8 Document</span>
         </div>
         <div className="flex items-center gap-4">
           <span>100%</span>
           <span>Windows (CRLF)</span>
-          <span className="text-accent-cyan/80">UTF-8</span>
+          <span className="text-accent-cyan/80 font-medium">UTF-8</span>
         </div>
       </div>
     </div>

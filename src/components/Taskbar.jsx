@@ -26,7 +26,7 @@ export default function Taskbar({
           type="button"
           onClick={onOpenTerminal}
           className="flex items-center gap-2 px-3 py-1.5 rounded bg-white/[0.04] border border-white/10 hover:border-accent-cyan/50 hover:bg-white/[0.08] hover:shadow-[0_0_12px_rgba(0,229,255,0.2)] text-text-main hover:text-accent-cyan transition-all duration-200 group active:scale-95 cursor-pointer"
-          title="Abrir Terminal"
+          title="Open Terminal"
         >
           <Terminal className="w-4 h-4 text-accent-cyan transition-transform group-hover:scale-110" />
           <span className="font-mono text-xs font-semibold tracking-wider text-slate-200 group-hover:text-accent-cyan">
@@ -92,14 +92,14 @@ export default function Taskbar({
           <button
             type="button"
             className="p-1.5 rounded hover:bg-white/5 hover:text-text-main transition-colors"
-            title="Conexión de red activa"
+            title="Active network connection"
           >
             <Wifi className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
             className="p-1.5 rounded hover:bg-white/5 hover:text-text-main transition-colors"
-            title="Audio del sistema"
+            title="System audio"
           >
             <Volume2 className="w-3.5 h-3.5" />
           </button>
