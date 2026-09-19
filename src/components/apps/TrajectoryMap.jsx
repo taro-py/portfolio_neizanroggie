@@ -15,9 +15,9 @@ const MILESTONES = {
     coords: '37.26° N, 6.94° W',
     period: 'Foundations (Years 1-3)',
     color: 'purple',
-    positionClass: 'top-[38%] left-[45.2%]',
+    positionClass: 'top-[37.8%] left-[45.2%]',
     labelDirection: 'below',
-    svgPos: { x: 452, y: 380 },
+    svgPos: { x: 452, y: 378 },
   },
   nc: {
     id: 'nc',
@@ -86,10 +86,10 @@ export default function TrajectoryMap({
 
   const isMax = windowData?.isMaximized;
 
-  // Exact desktop coordinates from original commit fac825a
+  // Desktop coordinates (with fine-tuned Huelva MAX position: elevated couple mm north)
   const dynamicCoords = {
     huelva: isMax
-      ? { class: 'top-[38%] left-[45.2%]', svg: { x: 452, y: 380 } } // MAX (Intacto)
+      ? { class: 'top-[37.8%] left-[45.2%]', svg: { x: 452, y: 378 } } // MAX (Ajuste fino: elevado al norte)
       : { class: 'top-[34%] left-[45.2%]', svg: { x: 452, y: 340 } }, // MIN (Arriba)
     nc: isMax
       ? { class: 'top-[39.5%] left-[25%]', svg: { x: 250, y: 395 } } // MAX (Micro-ajuste a la izquierda)
