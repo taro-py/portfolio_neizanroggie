@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Globe, Navigation, Briefcase, Sparkles, Minus, Square, Copy, X } from 'lucide-react';
 
 const MILESTONES = {
@@ -72,35 +72,46 @@ export default function TrajectoryMap({
 
   const activeInfo = MILESTONES[hoveredNode] || MILESTONES.stavanger;
 
-  const isMax = windowData?.isMaximized;
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
 
-  const dynamicCoords = {
-    huelva: isMax 
-      ? { class: 'top-[38%] left-[45.2%]', svg: { x: 452, y: 380 } } // MAX (Intacto)
-      : { class: 'top-[34%] left-[45.2%]', svg: { x: 452, y: 340 } }, // MIN (Arriba)
-    nc: isMax 
-      ? { class: 'top-[39.5%] left-[25%]', svg: { x: 250, y: 395 } } // MAX (Micro-ajuste a la izquierda)
-      : { class: 'top-[36%] left-[24%]', svg: { x: 240, y: 360 } },    // MIN (INTACTO)
-    stavanger: isMax 
-      ? { class: 'top-[17%] left-[48.5%]', svg: { x: 485, y: 170 } } // MAX (Intacto)
-      : { class: 'top-[15.5%] left-[49%]', svg: { x: 490, y: 155 } }, // MIN (Micro-arriba y Micro-derecha)
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Percentage coordinates: Desktop intact; Mobile adjusted with reduced 'top' values to raise the points physically
+  const nodeCoords = isMobile
+    ? {
+        huelva: { top: '28.5%', left: '45.2%', svg: { x: 452, y: 285 } }, // Mobile: subido del Sahara a la Península Ibérica
+        nc: { top: '31.5%', left: '25%', svg: { x: 250, y: 315 } },       // Mobile: subido del Golfo de México a la costa este continental USA
+        stavanger: { top: '14.5%', left: '48.5%', svg: { x: 485, y: 145 } }, // Mobile: subido un pelín más al norte
+      }
+    : {
+        huelva: { top: '38%', left: '45.2%', svg: { x: 452, y: 380 } }, // PC (Intacto)
+        nc: { top: '39.5%', left: '25%', svg: { x: 250, y: 395 } },      // PC (Intacto)
+        stavanger: { top: '17%', left: '48.5%', svg: { x: 485, y: 170 } },// PC (Intacto)
+      };
 
   return (
     <div className="flex flex-col h-full overflow-hidden w-full absolute inset-0 bg-os font-mono select-none">
       {/* Top Tactical Bar / Window Titlebar */}
       <div
-        className={`window-drag-handle h-9 px-3 bg-window/90 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 z-20 select-none ${
-          windowData?.isMaximized ? 'cursor-default' : 'cursor-move'
+        className={`window-drag-handle h-9 px-2 sm:px-3 bg-window/90 border-b border-white/10 flex items-center justify-between w-full max-w-full text-xs text-text-main shrink-0 z-20 select-none ${
+          windowData?.isMaximized ? 'cursor-default' : 'cursor-default md:cursor-move'
         }`}
         onDoubleClick={() => onMaximize?.(windowData?.id || 'map')}
       >
-        <div className="flex items-center gap-2 text-slate-300 text-[11px] pointer-events-none">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-slate-300 text-[11px] pointer-events-none min-w-0 flex-1 mr-2">
           <Globe className="w-3.5 h-3.5 text-accent-cyan shrink-0" />
           <span className="truncate">guest@synth-os : ~/geo $ dotmap --world</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 text-[10px] pointer-events-none">
+        <div className="hidden md:flex items-center gap-2 text-[10px] pointer-events-none shrink-0 mr-2">
           <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse shadow-[0_0_8px_#00E5FF]" />
           <span className="text-accent-cyan font-semibold tracking-wider">
             GLOBAL VECTOR MAP &bull; 3 NODES MAPPED
@@ -108,181 +119,192 @@ export default function TrajectoryMap({
         </div>
 
         {/* Right side: Current location & Window Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-max ml-auto">
           <div className="text-[10px] text-text-main/60 hidden lg:block pointer-events-none">
             CURRENT: <span className="text-accent-cyan font-semibold">STAVANGER (UiS)</span>
           </div>
 
           {/* Window Action Controls */}
           <div
-            className="flex items-center gap-1"
+            className="window-controls relative z-30 flex items-center gap-1 pointer-events-auto shrink-0 min-w-max"
+            onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >
             {/* Minimize Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onMinimize?.(windowData?.id || 'map');
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title="Minimize"
               aria-label="Minimize"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5 pointer-events-none" />
             </button>
 
             {/* Maximize / Restore Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onMaximize?.(windowData?.id || 'map');
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title={windowData?.isMaximized ? 'Restore' : 'Maximize'}
               aria-label={windowData?.isMaximized ? 'Restore' : 'Maximize'}
             >
               {windowData?.isMaximized ? (
-                <Copy className="w-3 h-3 rotate-180" />
+                <Copy className="w-3 h-3 rotate-180 pointer-events-none" />
               ) : (
-                <Square className="w-3 h-3" />
+                <Square className="w-3 h-3 pointer-events-none" />
               )}
             </button>
 
             {/* Close Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onClose?.(windowData?.id || 'map');
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title="Close"
               aria-label="Close"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3.5 h-3.5 pointer-events-none" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Map Viewport Container: flex-1 relative overflow-hidden w-full with top-anchored 100% width background */}
-      <div
-        className="flex-1 relative overflow-hidden w-full bg-no-repeat bg-[length:100%_auto] bg-[position:center_top_10%] bg-[url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')] opacity-85"
-        style={{
-          backgroundSize: '100% auto',
-          backgroundPosition: 'center top 10%',
-          backgroundImage: `url('/world-map.svg'), url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')`,
-        }}
-      >
-        {/* Coordinate Reference Lines & Flight Arcs SVG */}
-        <svg
-          viewBox="0 0 1000 1000"
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            {/* Flight Arc Gradient 1: Huelva (Purple) -> North Carolina (Emerald Neon Green) */}
-            <linearGradient id="arcHuelvaToNC" x1="100%" y1="50%" x2="0%" y2="50%">
-              <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#34D399" stopOpacity="0.95" />
-            </linearGradient>
-
-            {/* Flight Arc Gradient 2: Huelva (Purple) -> Stavanger (Cyan) */}
-            <linearGradient id="arcHuelvaToStavanger" x1="0%" y1="100%" x2="50%" y2="0%">
-              <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.95" />
-            </linearGradient>
-
-            {/* Glowing drop shadows */}
-            <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00E5FF" floodOpacity="0.75" />
-            </filter>
-            <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#9D4EDD" floodOpacity="0.65" />
-            </filter>
-            <filter id="glowEmerald" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#34D399" floodOpacity="0.75" />
-            </filter>
-          </defs>
-
-          {/* Subtle Reference Grid */}
-          <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="3 3">
-            <line x1="0" y1="500" x2="1000" y2="500" strokeOpacity="0.1" />
-            <line x1="500" y1="0" x2="500" y2="1000" strokeOpacity="0.1" />
-          </g>
-
-          {/* Precision Flight Arcs originating from Huelva */}
-          {/* Ruta Huelva -> NC */}
-          <path
-            d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 350 280 ${dynamicCoords.nc.svg.x} ${dynamicCoords.nc.svg.y}`}
-            fill="none"
-            stroke="url(#arcHuelvaToNC)"
-            strokeWidth="2.5"
-            strokeDasharray="6 4"
-            filter="url(#glowEmerald)"
-            className="opacity-90"
+      {/* Map Viewport Container */}
+      <div className="flex-1 relative overflow-auto no-scrollbar w-full flex items-center justify-center bg-os p-0">
+        {/* Map Container: Wraps image and markers with position: relative */}
+        <div className="relative w-full max-w-full">
+          {/* Responsive Map Image */}
+          <img
+            src="/world-map.svg"
+            alt="World Map"
+            className="w-full h-auto block select-none pointer-events-none opacity-85"
+            draggable={false}
           />
 
-          {/* Ruta Huelva -> Stavanger */}
-          <path
-            d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 465 270 ${dynamicCoords.stavanger.svg.x} ${dynamicCoords.stavanger.svg.y}`}
-            fill="none"
-            stroke="url(#arcHuelvaToStavanger)"
-            strokeWidth="2.8"
-            strokeDasharray="6 4"
-            filter="url(#glowCyan)"
-          />
-        </svg>
+          {/* Coordinate Reference Lines & Flight Arcs SVG */}
+          <svg
+            viewBox="0 0 1000 1000"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              {/* Flight Arc Gradient 1: Huelva (Purple) -> North Carolina (Emerald Neon Green) */}
+              <linearGradient id="arcHuelvaToNC" x1="100%" y1="50%" x2="0%" y2="50%">
+                <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="#34D399" stopOpacity="0.95" />
+              </linearGradient>
 
-        {/* Interactive HTML Markers - Pure Static Pulsing Beacons */}
-        {NODES_LIST.map((node) => {
-          return (
-            <div
-              key={node.id}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 z-30 ${dynamicCoords[node.id].class}`}
-              onMouseEnter={() => setHoveredNode(node.id)}
-              onMouseLeave={() => setHoveredNode('stavanger')}
-            >
-              {/* Marker Beacon: Static size and position */}
-              <div className="relative flex items-center justify-center cursor-pointer p-2 select-none">
-                {node.id === 'stavanger' && (
-                  <>
-                    <span className="animate-ping absolute w-8 h-8 rounded-full bg-accent-cyan/40 opacity-75 pointer-events-none" />
-                    <span className="w-5 h-5 rounded-full bg-accent-cyan/25 border-2 border-accent-cyan flex items-center justify-center shadow-[0_0_18px_#00E5FF]">
-                      <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-                    </span>
-                  </>
-                )}
-                {node.id === 'nc' && (
-                  <>
-                    <span className="animate-pulse absolute w-6 h-6 rounded-full bg-emerald-400/30 pointer-events-none" />
-                    <span className="w-4 h-4 rounded-full bg-emerald-400/20 border-2 border-emerald-400 flex items-center justify-center shadow-[0_0_14px_#34D399]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    </span>
-                  </>
-                )}
-                {node.id === 'huelva' && (
-                  <>
-                    <span className="animate-pulse absolute w-6 h-6 rounded-full bg-accent-purple/30 pointer-events-none" />
-                    <span className="w-4 h-4 rounded-full bg-accent-purple/20 border-2 border-accent-purple flex items-center justify-center shadow-[0_0_14px_#9D4EDD]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
-                    </span>
-                  </>
-                )}
+              {/* Flight Arc Gradient 2: Huelva (Purple) -> Stavanger (Cyan) */}
+              <linearGradient id="arcHuelvaToStavanger" x1="0%" y1="100%" x2="50%" y2="0%">
+                <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.95" />
+              </linearGradient>
+
+              {/* Glowing drop shadows */}
+              <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00E5FF" floodOpacity="0.75" />
+              </filter>
+              <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#9D4EDD" floodOpacity="0.65" />
+              </filter>
+              <filter id="glowEmerald" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#34D399" floodOpacity="0.75" />
+              </filter>
+            </defs>
+
+            {/* Subtle Reference Grid */}
+            <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="3 3">
+              <line x1="0" y1="500" x2="1000" y2="500" strokeOpacity="0.1" />
+              <line x1="500" y1="0" x2="500" y2="1000" strokeOpacity="0.1" />
+            </g>
+
+            {/* Precision Flight Arcs originating from Huelva */}
+            {/* Ruta Huelva -> NC */}
+            <path
+              d={`M ${nodeCoords.huelva.svg.x} ${nodeCoords.huelva.svg.y} Q 350 ${isMobile ? 200 : 280} ${nodeCoords.nc.svg.x} ${nodeCoords.nc.svg.y}`}
+              fill="none"
+              stroke="url(#arcHuelvaToNC)"
+              strokeWidth="2.5"
+              strokeDasharray="6 4"
+              filter="url(#glowEmerald)"
+              className="opacity-90"
+            />
+
+            {/* Ruta Huelva -> Stavanger */}
+            <path
+              d={`M ${nodeCoords.huelva.svg.x} ${nodeCoords.huelva.svg.y} Q 465 ${isMobile ? 180 : 270} ${nodeCoords.stavanger.svg.x} ${nodeCoords.stavanger.svg.y}`}
+              fill="none"
+              stroke="url(#arcHuelvaToStavanger)"
+              strokeWidth="2.8"
+              strokeDasharray="6 4"
+              filter="url(#glowCyan)"
+            />
+          </svg>
+
+          {/* Interactive HTML Markers - Pure Static Pulsing Beacons positioned with % */}
+          {NODES_LIST.map((node) => {
+            const coords = nodeCoords[node.id];
+            return (
+              <div
+                key={node.id}
+                style={{ top: coords.top, left: coords.left }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
+                onMouseEnter={() => setHoveredNode(node.id)}
+                onMouseLeave={() => setHoveredNode('stavanger')}
+                onClick={() => setHoveredNode(node.id)}
+              >
+                {/* Marker Beacon: Static size and position */}
+                <div className="relative flex items-center justify-center cursor-pointer p-2 select-none">
+                  {node.id === 'stavanger' && (
+                    <>
+                      <span className="animate-ping absolute w-8 h-8 rounded-full bg-accent-cyan/40 opacity-75 pointer-events-none" />
+                      <span className="w-5 h-5 rounded-full bg-accent-cyan/25 border-2 border-accent-cyan flex items-center justify-center shadow-[0_0_18px_#00E5FF]">
+                        <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
+                      </span>
+                    </>
+                  )}
+                  {node.id === 'nc' && (
+                    <>
+                      <span className="animate-pulse absolute w-6 h-6 rounded-full bg-emerald-400/30 pointer-events-none" />
+                      <span className="w-4 h-4 rounded-full bg-emerald-400/20 border-2 border-emerald-400 flex items-center justify-center shadow-[0_0_14px_#34D399]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      </span>
+                    </>
+                  )}
+                  {node.id === 'huelva' && (
+                    <>
+                      <span className="animate-pulse absolute w-6 h-6 rounded-full bg-accent-purple/30 pointer-events-none" />
+                      <span className="w-4 h-4 rounded-full bg-accent-purple/20 border-2 border-accent-purple flex items-center justify-center shadow-[0_0_14px_#9D4EDD]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Persistent Milestone Detail HUD Panel: shrink-0 mb-0 z-10 anchored to the bottom without scrolling */}
-      <div className="shrink-0 mb-0 z-10 w-full p-3 bg-window/95 border-t border-white/10 backdrop-blur-md shadow-2xl flex flex-col gap-2">
-        <div className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="shrink-0 mb-0 z-10 w-full p-2.5 sm:p-3 bg-window/95 border-t border-white/10 backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2">
+        <div className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span
@@ -327,12 +349,12 @@ export default function TrajectoryMap({
               )}
             </p>
 
-            <p className="text-[11px] text-text-main/80 leading-snug">
+            <p className="text-[10px] sm:text-[11px] text-text-main/80 leading-snug line-clamp-2 sm:line-clamp-none">
               {activeInfo.desc}
             </p>
           </div>
 
-          <div className="text-left sm:text-right text-[10px] text-text-main/60 font-mono shrink-0">
+          <div className="text-left sm:text-right text-[10px] text-text-main/60 font-mono shrink-0 hidden sm:block">
             <p className="text-emerald-400 font-semibold">{activeInfo.coords}</p>
             <p className="text-slate-200 font-semibold tracking-wider">{activeInfo.dates}</p>
             <p className="text-slate-400">{activeInfo.period}</p>
@@ -340,19 +362,19 @@ export default function TrajectoryMap({
         </div>
 
         {/* Global Trajectory Flow Indicator */}
-        <div className="w-full max-w-5xl mx-auto flex items-center justify-between gap-2 pt-1.5 border-t border-white/5 text-[10px] font-mono text-text-main/60">
+        <div className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2 pt-1.5 border-t border-white/5 text-[10px] font-mono text-text-main/60">
           <div className="flex items-center gap-1 text-slate-400">
-            <Navigation className="w-3 h-3 text-accent-purple" />
+            <Navigation className="w-3 h-3 text-accent-purple shrink-0" />
             <span>1. Huelva, Spain (2023 - 2027)</span>
           </div>
-          <span className="text-white/20">&rarr;</span>
+          <span className="hidden sm:inline text-white/20">&rarr;</span>
           <div className="flex items-center gap-1 text-slate-400">
-            <Briefcase className="w-3 h-3 text-emerald-400" />
+            <Briefcase className="w-3 h-3 text-emerald-400 shrink-0" />
             <span>2. North Carolina, USA (Jun 2024 - Sep 2024)</span>
           </div>
-          <span className="text-white/20">&rarr;</span>
+          <span className="hidden sm:inline text-white/20">&rarr;</span>
           <div className="flex items-center gap-1 text-accent-cyan font-bold">
-            <Sparkles className="w-3 h-3 text-accent-cyan" />
+            <Sparkles className="w-3 h-3 text-accent-cyan shrink-0" />
             <span>3. Stavanger, Norway (2026 - 2027)</span>
           </div>
         </div>

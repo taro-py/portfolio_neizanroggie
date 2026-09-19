@@ -63,23 +63,23 @@ export default function ProjectsExplorer() {
   return (
     <div className="h-full w-full flex flex-col bg-os font-mono select-none overflow-hidden">
       {/* Directory Address Bar */}
-      <div className="h-9 px-4 bg-window/80 border-b border-white/5 flex items-center justify-between text-xs text-text-main shrink-0">
+      <div className="h-9 px-3 sm:px-4 bg-window/80 border-b border-white/5 flex items-center justify-between text-xs text-text-main shrink-0">
         <div className="flex items-center gap-2 text-slate-300 text-[11px]">
           <HardDrive className="w-3.5 h-3.5 text-accent-cyan" />
           <span>Location: <span className="text-accent-cyan">~/projects/</span></span>
         </div>
-        <div className="text-[10px] text-text-main/60">
+        <div className="text-[10px] text-text-main/60 hidden sm:block">
           <span>{PROJECTS.length} repositories mounted</span>
         </div>
       </div>
 
       {/* Projects Grid Container */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {PROJECTS.map((project) => (
             <div
               key={project.id}
-              className="p-5 rounded-lg bg-os border border-accent-purple/30 hover:border-accent-cyan/50 hover:shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-200 flex flex-col justify-between space-y-4 group"
+              className="p-4 sm:p-5 rounded-lg bg-os border border-accent-purple/30 hover:border-accent-cyan/50 hover:shadow-[0_0_20px_rgba(0,229,255,0.15)] transition-all duration-200 flex flex-col justify-between space-y-3 sm:space-y-4 group"
             >
               {/* Card Header: Title & Folder Icon */}
               <div>

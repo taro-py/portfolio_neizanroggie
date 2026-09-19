@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Taskbar from './Taskbar';
 import Window from './Window';
 import DesktopIcon from './DesktopIcon';
@@ -27,6 +27,8 @@ export default function Desktop() {
     updateWindowPosition,
     updateWindowSize,
   } = useWindowManager();
+
+  const [selectedIconId, setSelectedIconId] = useState(null);
 
   const hasAutoStartedRef = useRef(false);
 
@@ -156,33 +158,39 @@ export default function Desktop() {
       {/* Desktop Workspace: bounds parent occupying 100vw and exactly calc(100vh - 48px) */}
       <div
         id="desktop-workspace"
+        onClick={() => setSelectedIconId(null)}
         className="relative z-10 w-full h-[calc(100vh-48px)] overflow-hidden"
       >
         {/* Desktop Icons Grid (Top-Left) */}
         <section
           aria-label="Desktop shortcuts"
-          className="absolute top-5 left-5 inline-flex flex-col gap-4 z-0 pointer-events-auto"
+          className="absolute top-4 left-4 sm:top-5 sm:left-5 inline-flex flex-col gap-3 sm:gap-4 z-0 pointer-events-auto"
         >
           {desktopShortcuts.map((shortcut) => (
             <DesktopIcon
               key={shortcut.id}
               title={shortcut.title}
               icon={shortcut.icon}
-              onOpen={() => openWindow(shortcut)}
+              isSelected={selectedIconId === shortcut.id}
+              onSelect={() => setSelectedIconId(shortcut.id)}
+              onOpen={() => {
+                setSelectedIconId(null);
+                openWindow(shortcut);
+              }}
             />
           ))}
         </section>
 
         {/* Ambient watermark behind windows */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 px-4">
           <div className="relative text-center space-y-2 opacity-25 transition-opacity duration-500 hover:opacity-45">
-            <p className="font-mono text-xs tracking-[0.35em] uppercase text-text-main">
+            <p className="font-mono text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.35em] uppercase text-text-main">
               Portfolio OS &bull; Kernel v2.0.1
             </p>
-            <h1 className="text-3xl sm:text-4xl font-mono font-bold tracking-tight text-slate-300">
+            <h1 className="text-2xl sm:text-4xl font-mono font-bold tracking-tight text-slate-300">
               SYSTEM READY<span className="animate-pulse text-accent-cyan">_</span>
             </h1>
-            <p className="font-mono text-[11px] text-text-main/60 tracking-wider">
+            <p className="font-mono text-[10px] sm:text-[11px] text-text-main/60 tracking-wider">
               Double click any desktop icon to launch application
             </p>
           </div>

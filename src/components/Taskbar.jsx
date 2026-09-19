@@ -20,26 +20,26 @@ export default function Taskbar({
   onOpenTerminal,
 }) {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 w-full h-12 bg-window/95 backdrop-blur-md border-t border-accent-purple/20 flex items-center justify-between px-4 z-50 select-none shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+    <footer className="fixed bottom-0 left-0 right-0 w-full h-12 bg-window/95 backdrop-blur-md border-t border-accent-purple/20 flex items-center justify-between px-2 sm:px-4 z-50 select-none shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
       {/* Left: OS Launcher / Terminal Trigger */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <button
           type="button"
           onClick={onOpenTerminal}
-          className="flex items-center gap-2 px-3 py-1.5 rounded bg-white/[0.04] border border-white/10 hover:border-accent-cyan/50 hover:bg-white/[0.08] hover:shadow-[0_0_12px_rgba(0,229,255,0.2)] text-text-main hover:text-accent-cyan transition-all duration-200 group active:scale-95 cursor-pointer"
+          className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 rounded bg-white/[0.04] border border-white/10 hover:border-accent-cyan/50 hover:bg-white/[0.08] hover:shadow-[0_0_12px_rgba(0,229,255,0.2)] text-text-main hover:text-accent-cyan transition-all duration-200 group active:scale-95 cursor-pointer"
           title="Open Terminal"
         >
           <Terminal className="w-4 h-4 text-accent-cyan transition-transform group-hover:scale-110" />
-          <span className="font-mono text-xs font-semibold tracking-wider text-slate-200 group-hover:text-accent-cyan">
+          <span className="font-mono text-xs font-semibold tracking-wider text-slate-200 group-hover:text-accent-cyan hidden sm:inline">
             TERMINAL
           </span>
-          <span className="font-mono text-[10px] px-1 py-0.5 rounded bg-accent-purple/20 text-accent-purple border border-accent-purple/30">
+          <span className="font-mono text-[10px] px-1 py-0.5 rounded bg-accent-purple/20 text-accent-purple border border-accent-purple/30 hidden md:inline">
             v2.0.1
           </span>
         </button>
 
         {/* Subtle separator */}
-        <div className="h-5 w-px bg-white/10" />
+        <div className="h-5 w-px bg-white/10 hidden sm:block" />
 
         {/* Quick status indicator */}
         <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-text-main/70">
@@ -49,7 +49,7 @@ export default function Taskbar({
       </div>
 
       {/* Center: Open tasks / Window tabs area */}
-      <div className="flex-1 flex items-center justify-start sm:justify-center px-4 gap-2 overflow-x-auto no-scrollbar">
+      <div className="flex-1 flex items-center justify-start sm:justify-center px-1.5 sm:px-4 gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
         {windows.map((win) => {
           const Icon = ICON_MAP[win.icon] || Terminal;
           const isActive = win.id === activeWindowId && !win.isMinimized;
@@ -65,7 +65,7 @@ export default function Taskbar({
                   onFocusWindow(win.id);
                 }
               }}
-              className={`relative h-8 px-3 rounded flex items-center gap-2 font-mono text-xs transition-all duration-150 border cursor-pointer ${
+              className={`relative h-8 px-2 sm:px-3 rounded flex items-center gap-1.5 sm:gap-2 font-mono text-xs transition-all duration-150 border cursor-pointer shrink-0 ${
                 isActive
                   ? 'bg-white/[0.08] border-accent-cyan/40 text-slate-100 shadow-[0_0_10px_rgba(0,229,255,0.15)]'
                   : win.isMinimized
@@ -75,7 +75,7 @@ export default function Taskbar({
               title={win.title}
             >
               <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-accent-cyan' : 'text-text-main/70'}`} />
-              <span className="truncate max-w-[120px]">{win.title}</span>
+              <span className="truncate max-w-[75px] sm:max-w-[120px]">{win.title}</span>
 
               {/* Active Indicator Bar */}
               {isActive && (
@@ -87,7 +87,7 @@ export default function Taskbar({
       </div>
 
       {/* Right: System Tray & Real-time Clock */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {/* System Tray Icons */}
         <div className="hidden md:flex items-center gap-2 text-text-main/60">
           <button

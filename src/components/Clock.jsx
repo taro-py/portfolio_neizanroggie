@@ -17,7 +17,7 @@ export default function Clock() {
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/40 border border-white/5 font-mono text-xs text-text-main shadow-inner transition-all hover:border-accent-cyan/30 hover:shadow-[0_0_12px_rgba(0,229,255,0.15)] group"
+      className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-md bg-black/40 border border-white/5 font-mono text-[11px] sm:text-xs text-text-main shadow-inner transition-all hover:border-accent-cyan/30 hover:shadow-[0_0_12px_rgba(0,229,255,0.15)] group shrink-0"
       title="Local system time"
     >
       <span className="relative flex h-2 w-2">

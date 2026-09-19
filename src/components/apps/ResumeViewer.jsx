@@ -18,12 +18,12 @@ export default function ResumeViewer({ onClose }) {
   return (
     <div className="h-full w-full flex flex-col bg-[#0d0e15] font-mono select-none overflow-hidden">
       {/* Top Document Toolbar */}
-      <div className="h-10 px-3 sm:px-4 bg-window/95 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 gap-2">
+      <div className="h-10 px-2 sm:px-4 bg-window/95 border-b border-white/10 flex items-center justify-between text-xs text-text-main shrink-0 gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar">
         {/* Left: Terminal Path & Artifact Badge */}
-        <div className="flex items-center gap-2 text-slate-300 font-mono text-[11px] min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-slate-300 font-mono text-[11px] shrink-0">
           <FileCode className="w-3.5 h-3.5 text-accent-cyan shrink-0" />
           <span className="truncate hidden sm:inline">neizan@os : ~/resume $ view</span>
-          <span className="sm:hidden truncate">resume.pdf</span>
+          <span className="sm:hidden text-accent-cyan font-semibold">CV</span>
           <div className="hidden md:flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.5 rounded tracking-wider">
             <CheckCircle className="w-2.5 h-2.5 text-emerald-400" />
             <span>OFFICIAL CV</span>
@@ -31,11 +31,11 @@ export default function ResumeViewer({ onClose }) {
         </div>
 
         {/* Center: View Mode Toggle */}
-        <div className="flex items-center bg-black/40 border border-white/10 rounded p-0.5 text-[11px]">
+        <div className="flex items-center bg-black/40 border border-white/10 rounded p-0.5 text-[11px] shrink-0">
           <button
             type="button"
             onClick={() => setViewMode('doc')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-all ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded transition-all ${
               viewMode === 'doc'
                 ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30 shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -48,7 +48,7 @@ export default function ResumeViewer({ onClose }) {
           <button
             type="button"
             onClick={() => setViewMode('pdf')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-all ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded transition-all ${
               viewMode === 'pdf'
                 ? 'bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30 shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -61,7 +61,7 @@ export default function ResumeViewer({ onClose }) {
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {viewMode === 'doc' && (
             <button
               type="button"
@@ -78,7 +78,7 @@ export default function ResumeViewer({ onClose }) {
             href="/neizan_roggie_resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-slate-300 hover:text-accent-cyan transition-colors"
+            className="flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-slate-300 hover:text-accent-cyan transition-colors"
             title="Open original PDF in new tab"
           >
             <ExternalLink className="w-3 h-3" />
@@ -88,7 +88,7 @@ export default function ResumeViewer({ onClose }) {
           <a
             href="/neizan_roggie_resume.pdf"
             download="Neizan_Roggie_CV.pdf"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-accent-cyan/15 hover:bg-accent-cyan/25 border border-accent-cyan/40 text-[11px] text-accent-cyan font-medium transition-all shadow-[0_0_10px_rgba(0,229,255,0.15)]"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded bg-accent-cyan/15 hover:bg-accent-cyan/25 border border-accent-cyan/40 text-[11px] text-accent-cyan font-medium transition-all shadow-[0_0_10px_rgba(0,229,255,0.15)]"
             title="Download original PDF file"
           >
             <Download className="w-3 h-3" />
@@ -99,7 +99,7 @@ export default function ResumeViewer({ onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-2 py-1 rounded hover:bg-white/10 text-[11px] text-text-main hover:text-slate-200 transition-colors ml-1"
+              className="px-1.5 sm:px-2 py-1 rounded hover:bg-white/10 text-[11px] text-text-main hover:text-slate-200 transition-colors ml-0.5 sm:ml-1"
             >
               Close
             </button>
@@ -119,9 +119,9 @@ export default function ResumeViewer({ onClose }) {
         </div>
       ) : (
         /* High-Fidelity LaTeX Folio Document View */
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-8 flex justify-center items-start bg-[#0a0b10] select-text">
+        <div className="flex-1 overflow-y-auto p-2 sm:p-6 md:p-8 flex justify-center items-start bg-[#0a0b10] select-text">
           <div
-            className="w-full max-w-[760px] bg-white text-slate-900 rounded-sm shadow-2xl p-6 sm:p-10 md:p-12 border border-slate-300 flex flex-col relative transition-all"
+            className="w-full max-w-[760px] bg-white text-slate-900 rounded-sm shadow-2xl p-4 sm:p-10 md:p-12 border border-slate-300 flex flex-col relative transition-all"
             style={{
               fontFamily:
                 '"Latin Modern Roman", "Computer Modern", Georgia, Cambria, "Times New Roman", serif',

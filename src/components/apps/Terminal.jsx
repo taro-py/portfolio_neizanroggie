@@ -289,18 +289,20 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
   };
 
   return (
-    <div className="h-full w-full bg-os p-4 font-mono text-xs overflow-y-auto text-text-main flex flex-col justify-between selection:bg-accent-cyan/30 selection:text-accent-cyan">
+    <div className="h-full w-full bg-os p-3 sm:p-4 font-mono text-xs overflow-y-auto text-text-main flex flex-col justify-between selection:bg-accent-cyan/30 selection:text-accent-cyan">
       <div className="space-y-3">
         {/* Terminal Header Banner */}
         <div className="flex items-center gap-2 text-accent-cyan/80 pb-2 border-b border-white/5 select-none">
-          <TerminalIcon className="w-4 h-4 text-accent-cyan" />
-          <span className="font-semibold tracking-wider">NEIZAN_ROGGIE // INTERACTIVE TERMINAL</span>
+          <TerminalIcon className="w-4 h-4 text-accent-cyan shrink-0" />
+          <span className="font-semibold tracking-wider text-[11px] sm:text-xs truncate">
+            NEIZAN_ROGGIE // INTERACTIVE TERMINAL
+          </span>
         </div>
 
         {/* Boot Sequence Logs */}
         <div className="space-y-1">
           {displayedLogs.map((log, index) => (
-            <div key={index} className={`font-mono text-[11px] leading-relaxed ${log.color}`}>
+            <div key={index} className={`font-mono text-[10px] sm:text-[11px] leading-relaxed ${log.color}`}>
               {log.text}
             </div>
           ))}
@@ -309,33 +311,33 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
         {/* Skills Section (Rendered after boot completion) */}
         {bootFinished && (
           <div className="pt-3 space-y-3 animate-in fade-in duration-500">
-            <div className="flex items-center gap-2 text-slate-200 font-semibold tracking-wide border-t border-white/10 pt-3">
-              <Sparkles className="w-3.5 h-3.5 text-accent-cyan" />
+            <div className="flex items-center gap-2 text-slate-200 font-semibold tracking-wide border-t border-white/10 pt-3 text-[11px] sm:text-xs">
+              <Sparkles className="w-3.5 h-3.5 text-accent-cyan shrink-0" />
               <span>CORE SKILLS &amp; TECHNOLOGIES:</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
               {SKILLS.map((skill) => (
                 <div
                   key={skill.name}
-                  className="p-2.5 rounded bg-white/[0.03] border border-white/10 hover:border-accent-cyan/40 hover:bg-white/[0.05] transition-all group"
+                  className="p-2 sm:p-2.5 rounded bg-white/[0.03] border border-white/10 hover:border-accent-cyan/40 hover:bg-white/[0.05] transition-all group"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-slate-100 group-hover:text-accent-cyan transition-colors">
+                    <span className="font-bold text-slate-100 group-hover:text-accent-cyan transition-colors text-xs">
                       {skill.name}
                     </span>
                     <span className={`text-[9px] px-1.5 py-0.5 rounded border font-mono ${skill.accent}`}>
                       {skill.tag}
                     </span>
                   </div>
-                  <p className="text-[11px] text-text-main/70 leading-snug">
+                  <p className="text-[10px] sm:text-[11px] text-text-main/70 leading-snug">
                     {skill.desc}
                   </p>
                 </div>
               ))}
             </div>
 
-            <p className="text-[11px] text-text-main/50 italic pt-1">
+            <p className="text-[10px] sm:text-[11px] text-text-main/50 italic pt-1">
               Type 'help' in the prompt to view available system commands.
             </p>
           </div>
@@ -343,13 +345,13 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
 
         {/* Command Output History */}
         {commandHistory.map((item, idx) => (
-          <div key={idx} className="space-y-0.5 pt-1">
+          <div key={idx} className="space-y-0.5 pt-1 text-xs">
             <div className="flex items-center gap-2 text-slate-200">
               <span className="text-accent-cyan">guest@synth-os:{item.dir}$</span>
               <span>{item.command}</span>
             </div>
             {item.response && (
-              <div className="text-text-main/80 pl-4 whitespace-pre-wrap font-mono text-[11px] leading-relaxed">
+              <div className="text-text-main/80 pl-3 sm:pl-4 whitespace-pre-wrap font-mono text-[10px] sm:text-[11px] leading-relaxed">
                 {item.response}
               </div>
             )}
@@ -359,9 +361,9 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
 
       {/* Interactive Command Prompt Line */}
       {bootFinished && (
-        <form onSubmit={handleCommandSubmit} className="mt-4 pt-2 border-t border-white/5 flex items-center gap-2">
-          <span className="text-accent-cyan font-bold select-none shrink-0">
-            guest@synth-os:{currentDir}$
+        <form onSubmit={handleCommandSubmit} className="mt-3 sm:mt-4 pt-2 border-t border-white/5 flex items-center gap-1.5 sm:gap-2">
+          <span className="text-accent-cyan font-bold select-none shrink-0 text-[11px] sm:text-xs">
+            <span className="hidden sm:inline">guest@synth-os:</span>{currentDir}$
           </span>
           <input
             type="text"
@@ -369,10 +371,10 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
             onChange={(e) => setInputCommand(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="type a command (e.g. ls, open resume, help)..."
-            className="flex-1 bg-transparent text-slate-100 outline-none font-mono text-xs placeholder:text-text-main/30"
+            className="flex-1 bg-transparent text-slate-100 outline-none font-mono text-[11px] sm:text-xs placeholder:text-text-main/30"
             autoFocus
           />
-          <span className="w-2 h-4 bg-accent-cyan animate-pulse shrink-0" />
+          <span className="w-1.5 sm:w-2 h-3.5 sm:h-4 bg-accent-cyan animate-pulse shrink-0" />
         </form>
       )}
 

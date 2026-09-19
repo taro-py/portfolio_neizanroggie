@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import { motion } from 'framer-motion';
 import { Minus, Square, Copy, X, Terminal, Folder, FileText, Compass } from 'lucide-react';
@@ -28,18 +29,32 @@ export default function Window({
   onResizeStop,
   children,
 }) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleBringToFront = bringToFront || onFocus;
   const bringToFrontHandler = () => {
     handleBringToFront?.(windowData.id);
   };
   const IconComponent = ICON_MAP[windowData.icon] || Terminal;
 
-  // Maximize geometry constraints (100vw and calc(100vh - 48px) excluding taskbar)
-  const size = windowData.isMaximized
-    ? { width: '100vw', height: 'calc(100vh - 48px)' }
+  const isFullScreen = isMobile || windowData.isMaximized;
+
+  // Maximize / Mobile geometry constraints: 100% on mobile or maximized
+  const size = isFullScreen
+    ? { width: '100%', height: 'calc(100vh - 48px)' }
     : windowData.size;
 
-  const position = windowData.isMaximized
+  const position = isFullScreen
     ? { x: 0, y: 0 }
     : windowData.position;
 
@@ -48,12 +63,12 @@ export default function Window({
       size={size}
       position={position}
       onDragStop={(e, d) => {
-        if (!windowData.isMaximized) {
+        if (!isFullScreen) {
           onDragStop(windowData.id, { x: d.x, y: d.y });
         }
       }}
       onResizeStop={(e, direction, ref, delta, pos) => {
-        if (!windowData.isMaximized) {
+        if (!isFullScreen) {
           onResizeStop(
             windowData.id,
             { width: ref.offsetWidth, height: ref.offsetHeight },
@@ -62,21 +77,22 @@ export default function Window({
         }
       }}
       dragHandleClassName="window-drag-handle"
+      cancel=".window-controls"
       bounds="parent"
       minWidth={320}
       minHeight={180}
-      disableDragging={windowData.isMaximized}
-      enableResizing={!windowData.isMaximized}
+      disableDragging={isFullScreen}
+      enableResizing={!isFullScreen}
       z={windowData.zIndex || 50}
       style={{
         zIndex: windowData.zIndex || 50,
         display: windowData.isMinimized ? 'none' : 'block',
-        ...(windowData.isMaximized
+        ...(isFullScreen
           ? {
               top: 0,
               left: 0,
               transform: 'none',
-              width: '100vw',
+              width: '100%',
               height: 'calc(100vh - 48px)',
               borderRadius: '0px',
             }
@@ -86,8 +102,8 @@ export default function Window({
       onClickCapture={bringToFrontHandler}
       onMouseDown={bringToFrontHandler}
       className={`select-none ${
-        windowData.isMaximized
-          ? '!top-0 !left-0 !transform-none !w-screen !h-[calc(100vh-48px)] !rounded-none'
+        isFullScreen
+          ? '!top-0 !left-0 !transform-none !w-full !h-[calc(100vh-48px)] !rounded-none'
           : ''
       }`}
     >
@@ -98,27 +114,27 @@ export default function Window({
         onMouseDown={bringToFrontHandler}
         style={{
           zIndex: windowData.zIndex || 50,
-          ...(windowData.isMaximized
+          ...(isFullScreen
             ? {
                 top: 0,
                 left: 0,
                 transform: 'none',
-                width: '100vw',
-                height: 'calc(100vh - 48px)',
+                width: '100%',
+                height: '100%',
                 borderRadius: '0px',
               }
             : {}),
         }}
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={isMobile ? false : { opacity: 0, scale: 0.95 }}
         animate={
-          windowData.isMaximized
+          isFullScreen
             ? { opacity: 1, scale: 1, x: 0, y: 0 }
             : { opacity: 1, scale: 1 }
         }
         transition={{ duration: 0.16, ease: 'easeOut' }}
         className={`w-full h-full flex flex-col overflow-hidden bg-os transition-shadow duration-200 border ${
-          windowData.isMaximized
-            ? '!rounded-none border-t-0 border-x-0 !transform-none !w-screen !h-[calc(100vh-48px)]'
+          isFullScreen
+            ? '!rounded-none border-t-0 border-x-0 !transform-none !w-full !h-full'
             : 'rounded-lg'
         } ${
           isActive
@@ -129,17 +145,17 @@ export default function Window({
         {/* Window Titlebar / Drag Handle (integrated in custom views like map) */}
         {windowData.id !== 'map' && (
           <header
-            className={`window-drag-handle h-9 px-3 bg-window border-b flex items-center justify-between select-none transition-colors duration-200 ${
-              windowData.isMaximized ? 'cursor-default' : 'cursor-move'
+            className={`window-drag-handle h-9 px-2 sm:px-3 bg-window border-b flex items-center justify-between w-full max-w-full shrink-0 select-none transition-colors duration-200 ${
+              isFullScreen ? 'cursor-default' : 'cursor-default md:cursor-move'
             } ${
               isActive
                 ? 'border-accent-cyan/20'
                 : 'border-accent-purple/20'
             }`}
-            onDoubleClick={() => onMaximize(windowData.id)}
+            onDoubleClick={() => !isFullScreen && onMaximize(windowData.id)}
           >
           {/* Left: Window Title & Icon */}
-          <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-hidden pointer-events-none min-w-0 flex-1 mr-2">
             <IconComponent
               className={`w-4 h-4 shrink-0 transition-colors ${
                 isActive ? 'text-accent-cyan' : 'text-text-main/70'
@@ -156,53 +172,60 @@ export default function Window({
 
           {/* Right: Window Controls */}
           <div
-            className="flex items-center gap-1.5 ml-2"
+            className="window-controls relative z-30 flex items-center gap-1 sm:gap-1.5 shrink-0 min-w-max ml-auto pointer-events-auto"
+            onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >
             {/* Minimize Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onMinimize(windowData.id);
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title="Minimize"
+              aria-label="Minimize"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5 pointer-events-none" />
             </button>
 
             {/* Maximize / Restore Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onMaximize(windowData.id);
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-white/10 hover:text-slate-100 transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title={windowData.isMaximized ? 'Restore' : 'Maximize'}
+              aria-label={windowData.isMaximized ? 'Restore' : 'Maximize'}
             >
               {windowData.isMaximized ? (
-                <Copy className="w-3 h-3 rotate-180" />
+                <Copy className="w-3 h-3 rotate-180 pointer-events-none" />
               ) : (
-                <Square className="w-3 h-3" />
+                <Square className="w-3 h-3 pointer-events-none" />
               )}
             </button>
 
             {/* Close Button */}
             <button
               type="button"
+              onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onClose(windowData.id);
               }}
-              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer"
+              className="w-6 h-6 rounded flex items-center justify-center text-text-main hover:bg-rose-600 hover:text-white transition-colors active:scale-95 cursor-pointer touch-manipulation"
               title="Close"
+              aria-label="Close"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3.5 h-3.5 pointer-events-none" />
             </button>
           </div>
         </header>

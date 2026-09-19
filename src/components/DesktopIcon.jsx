@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Terminal, Folder, FileText, Compass } from 'lucide-react';
 
 const ICON_MAP = {
@@ -15,32 +14,49 @@ const ICON_MAP = {
 export default function DesktopIcon({
   title,
   icon = 'terminal',
+  isSelected = false,
+  onSelect,
   onOpen,
 }) {
-  const [isSelected, setIsSelected] = useState(false);
   const Icon = ICON_MAP[icon] || FileText;
+
+  const handleOpen = (e) => {
+    e?.stopPropagation();
+    onOpen?.();
+  };
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    onSelect?.();
+
+    const isMobile =
+      typeof window !== 'undefined' &&
+      (window.innerWidth < 768 ||
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+        'ontouchstart' in window);
+
+    if (isMobile) {
+      handleOpen(e);
+    }
+  };
 
   return (
     <div
       tabIndex={0}
       role="button"
-      onClick={() => setIsSelected(true)}
-      onBlur={() => setIsSelected(false)}
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        onOpen();
-      }}
+      onClick={handleClick}
+      onDoubleClick={handleOpen}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          onOpen();
+          handleOpen(e);
         }
       }}
-      className={`group w-24 p-2 rounded-lg flex flex-col items-center justify-center gap-1.5 cursor-pointer outline-none transition-all duration-150 select-none ${
+      className={`group w-24 p-2 rounded-lg flex flex-col items-center justify-center gap-1.5 cursor-pointer outline-none transition-all duration-150 select-none touch-manipulation ${
         isSelected
           ? 'bg-accent-cyan/15 border border-accent-cyan/50 shadow-[0_0_15px_rgba(0,229,255,0.2)]'
           : 'hover:bg-white/[0.04] border border-transparent hover:border-white/10'
       }`}
-      title={`Doble clic para abrir ${title}`}
+      title={`Abrir ${title}`}
     >
       {/* Icon frame */}
       <div
