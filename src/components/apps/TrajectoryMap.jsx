@@ -84,18 +84,27 @@ export default function TrajectoryMap({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Percentage coordinates: Desktop intact; Mobile adjusted with reduced 'top' values to raise the points physically
-  const nodeCoords = isMobile
-    ? {
-        huelva: { top: '28.5%', left: '45.2%', svg: { x: 452, y: 285 } }, // Mobile: subido del Sahara a la Península Ibérica
-        nc: { top: '31.5%', left: '25%', svg: { x: 250, y: 315 } },       // Mobile: subido del Golfo de México a la costa este continental USA
-        stavanger: { top: '14.5%', left: '48.5%', svg: { x: 485, y: 145 } }, // Mobile: subido un pelín más al norte
-      }
-    : {
-        huelva: { top: '38%', left: '45.2%', svg: { x: 452, y: 380 } }, // PC (Intacto)
-        nc: { top: '39.5%', left: '25%', svg: { x: 250, y: 395 } },      // PC (Intacto)
-        stavanger: { top: '17%', left: '48.5%', svg: { x: 485, y: 170 } },// PC (Intacto)
-      };
+  const isMax = windowData?.isMaximized;
+
+  // Exact desktop coordinates from original commit fac825a
+  const dynamicCoords = {
+    huelva: isMax
+      ? { class: 'top-[38%] left-[45.2%]', svg: { x: 452, y: 380 } } // MAX (Intacto)
+      : { class: 'top-[34%] left-[45.2%]', svg: { x: 452, y: 340 } }, // MIN (Arriba)
+    nc: isMax
+      ? { class: 'top-[39.5%] left-[25%]', svg: { x: 250, y: 395 } } // MAX (Micro-ajuste a la izquierda)
+      : { class: 'top-[36%] left-[24%]', svg: { x: 240, y: 360 } }, // MIN (INTACTO)
+    stavanger: isMax
+      ? { class: 'top-[17%] left-[48.5%]', svg: { x: 485, y: 170 } } // MAX (Intacto)
+      : { class: 'top-[15.5%] left-[49%]', svg: { x: 490, y: 155 } }, // MIN (Micro-arriba y Micro-derecha)
+  };
+
+  // Mobile-specific coordinates with reduced top percentages
+  const mobileCoords = {
+    huelva: { top: '28.5%', left: '45.2%', svg: { x: 452, y: 285 } },
+    nc: { top: '31.5%', left: '25%', svg: { x: 250, y: 315 } },
+    stavanger: { top: '14.5%', left: '48.5%', svg: { x: 485, y: 145 } },
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden w-full absolute inset-0 bg-os font-mono select-none">
@@ -186,17 +195,121 @@ export default function TrajectoryMap({
       </div>
 
       {/* Map Viewport Container */}
-      <div className="flex-1 relative overflow-auto no-scrollbar w-full flex items-center justify-center bg-os p-0">
-        {/* Map Container: Wraps image and markers with position: relative */}
-        <div className="relative w-full max-w-full">
-          {/* Responsive Map Image */}
-          <img
-            src="/world-map.svg"
-            alt="World Map"
-            className="w-full h-auto block select-none pointer-events-none opacity-85"
-            draggable={false}
-          />
+      {isMobile ? (
+        /* Mobile: Responsive Image Container with Adjusted Coordinates */
+        <div className="flex-1 relative overflow-auto no-scrollbar w-full flex items-center justify-center bg-os p-0">
+          <div className="relative w-full max-w-full">
+            <img
+              src="/world-map.svg"
+              alt="World Map"
+              className="w-full h-auto block select-none pointer-events-none opacity-85"
+              draggable={false}
+            />
 
+            <svg
+              viewBox="0 0 1000 1000"
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="arcHuelvaToNCMobile" x1="100%" y1="50%" x2="0%" y2="50%">
+                  <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#34D399" stopOpacity="0.95" />
+                </linearGradient>
+
+                <linearGradient id="arcHuelvaToStavangerMobile" x1="0%" y1="100%" x2="50%" y2="0%">
+                  <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.95" />
+                </linearGradient>
+
+                <filter id="glowCyanMobile" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00E5FF" floodOpacity="0.75" />
+                </filter>
+                <filter id="glowPurpleMobile" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#9D4EDD" floodOpacity="0.65" />
+                </filter>
+                <filter id="glowEmeraldMobile" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#34D399" floodOpacity="0.75" />
+                </filter>
+              </defs>
+
+              <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="3 3">
+                <line x1="0" y1="500" x2="1000" y2="500" strokeOpacity="0.1" />
+                <line x1="500" y1="0" x2="500" y2="1000" strokeOpacity="0.1" />
+              </g>
+
+              <path
+                d={`M ${mobileCoords.huelva.svg.x} ${mobileCoords.huelva.svg.y} Q 350 200 ${mobileCoords.nc.svg.x} ${mobileCoords.nc.svg.y}`}
+                fill="none"
+                stroke="url(#arcHuelvaToNCMobile)"
+                strokeWidth="2.5"
+                strokeDasharray="6 4"
+                filter="url(#glowEmeraldMobile)"
+                className="opacity-90"
+              />
+
+              <path
+                d={`M ${mobileCoords.huelva.svg.x} ${mobileCoords.huelva.svg.y} Q 465 180 ${mobileCoords.stavanger.svg.x} ${mobileCoords.stavanger.svg.y}`}
+                fill="none"
+                stroke="url(#arcHuelvaToStavangerMobile)"
+                strokeWidth="2.8"
+                strokeDasharray="6 4"
+                filter="url(#glowCyanMobile)"
+              />
+            </svg>
+
+            {NODES_LIST.map((node) => {
+              const coords = mobileCoords[node.id];
+              return (
+                <div
+                  key={node.id}
+                  style={{ top: coords.top, left: coords.left }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
+                  onMouseEnter={() => setHoveredNode(node.id)}
+                  onMouseLeave={() => setHoveredNode('stavanger')}
+                  onClick={() => setHoveredNode(node.id)}
+                >
+                  <div className="relative flex items-center justify-center cursor-pointer p-2 select-none">
+                    {node.id === 'stavanger' && (
+                      <>
+                        <span className="animate-ping absolute w-8 h-8 rounded-full bg-accent-cyan/40 opacity-75 pointer-events-none" />
+                        <span className="w-5 h-5 rounded-full bg-accent-cyan/25 border-2 border-accent-cyan flex items-center justify-center shadow-[0_0_18px_#00E5FF]">
+                          <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
+                        </span>
+                      </>
+                    )}
+                    {node.id === 'nc' && (
+                      <>
+                        <span className="animate-pulse absolute w-6 h-6 rounded-full bg-emerald-400/30 pointer-events-none" />
+                        <span className="w-4 h-4 rounded-full bg-emerald-400/20 border-2 border-emerald-400 flex items-center justify-center shadow-[0_0_14px_#34D399]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        </span>
+                      </>
+                    )}
+                    {node.id === 'huelva' && (
+                      <>
+                        <span className="animate-pulse absolute w-6 h-6 rounded-full bg-accent-purple/30 pointer-events-none" />
+                        <span className="w-4 h-4 rounded-full bg-accent-purple/20 border-2 border-accent-purple flex items-center justify-center shadow-[0_0_14px_#9D4EDD]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        /* Desktop: Exact original container and dynamicCoords from fac825a */
+        <div
+          className="flex-1 relative overflow-hidden w-full bg-no-repeat bg-[length:100%_auto] bg-[position:center_top_10%] bg-[url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')] opacity-85"
+          style={{
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center top 10%',
+            backgroundImage: `url('/world-map.svg'), url('https://upload.wikimedia.org/wikipedia/commons/c/c3/World_map_blank_without_borders.svg')`,
+          }}
+        >
           {/* Coordinate Reference Lines & Flight Arcs SVG */}
           <svg
             viewBox="0 0 1000 1000"
@@ -204,72 +317,62 @@ export default function TrajectoryMap({
             preserveAspectRatio="none"
           >
             <defs>
-              {/* Flight Arc Gradient 1: Huelva (Purple) -> North Carolina (Emerald Neon Green) */}
-              <linearGradient id="arcHuelvaToNC" x1="100%" y1="50%" x2="0%" y2="50%">
+              <linearGradient id="arcHuelvaToNCDesktop" x1="100%" y1="50%" x2="0%" y2="50%">
                 <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
                 <stop offset="100%" stopColor="#34D399" stopOpacity="0.95" />
               </linearGradient>
 
-              {/* Flight Arc Gradient 2: Huelva (Purple) -> Stavanger (Cyan) */}
-              <linearGradient id="arcHuelvaToStavanger" x1="0%" y1="100%" x2="50%" y2="0%">
+              <linearGradient id="arcHuelvaToStavangerDesktop" x1="0%" y1="100%" x2="50%" y2="0%">
                 <stop offset="0%" stopColor="#9D4EDD" stopOpacity="0.95" />
                 <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.95" />
               </linearGradient>
 
-              {/* Glowing drop shadows */}
-              <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id="glowCyanDesktop" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#00E5FF" floodOpacity="0.75" />
               </filter>
-              <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id="glowPurpleDesktop" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#9D4EDD" floodOpacity="0.65" />
               </filter>
-              <filter id="glowEmerald" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id="glowEmeraldDesktop" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#34D399" floodOpacity="0.75" />
               </filter>
             </defs>
 
-            {/* Subtle Reference Grid */}
             <g stroke="#A9B1D6" strokeOpacity="0.06" strokeWidth="0.75" strokeDasharray="3 3">
               <line x1="0" y1="500" x2="1000" y2="500" strokeOpacity="0.1" />
               <line x1="500" y1="0" x2="500" y2="1000" strokeOpacity="0.1" />
             </g>
 
-            {/* Precision Flight Arcs originating from Huelva */}
-            {/* Ruta Huelva -> NC */}
             <path
-              d={`M ${nodeCoords.huelva.svg.x} ${nodeCoords.huelva.svg.y} Q 350 ${isMobile ? 200 : 280} ${nodeCoords.nc.svg.x} ${nodeCoords.nc.svg.y}`}
+              d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 350 280 ${dynamicCoords.nc.svg.x} ${dynamicCoords.nc.svg.y}`}
               fill="none"
-              stroke="url(#arcHuelvaToNC)"
+              stroke="url(#arcHuelvaToNCDesktop)"
               strokeWidth="2.5"
               strokeDasharray="6 4"
-              filter="url(#glowEmerald)"
+              filter="url(#glowEmeraldDesktop)"
               className="opacity-90"
             />
 
-            {/* Ruta Huelva -> Stavanger */}
             <path
-              d={`M ${nodeCoords.huelva.svg.x} ${nodeCoords.huelva.svg.y} Q 465 ${isMobile ? 180 : 270} ${nodeCoords.stavanger.svg.x} ${nodeCoords.stavanger.svg.y}`}
+              d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 465 270 ${dynamicCoords.stavanger.svg.x} ${dynamicCoords.stavanger.svg.y}`}
               fill="none"
-              stroke="url(#arcHuelvaToStavanger)"
+              stroke="url(#arcHuelvaToStavangerDesktop)"
               strokeWidth="2.8"
               strokeDasharray="6 4"
-              filter="url(#glowCyan)"
+              filter="url(#glowCyanDesktop)"
             />
           </svg>
 
-          {/* Interactive HTML Markers - Pure Static Pulsing Beacons positioned with % */}
+          {/* Interactive HTML Markers - Pure Static Pulsing Beacons */}
           {NODES_LIST.map((node) => {
-            const coords = nodeCoords[node.id];
             return (
               <div
                 key={node.id}
-                style={{ top: coords.top, left: coords.left }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
+                className={`absolute -translate-x-1/2 -translate-y-1/2 z-30 ${dynamicCoords[node.id].class}`}
                 onMouseEnter={() => setHoveredNode(node.id)}
                 onMouseLeave={() => setHoveredNode('stavanger')}
                 onClick={() => setHoveredNode(node.id)}
               >
-                {/* Marker Beacon: Static size and position */}
                 <div className="relative flex items-center justify-center cursor-pointer p-2 select-none">
                   {node.id === 'stavanger' && (
                     <>
@@ -300,7 +403,7 @@ export default function TrajectoryMap({
             );
           })}
         </div>
-      </div>
+      )}
 
       {/* Persistent Milestone Detail HUD Panel: shrink-0 mb-0 z-10 anchored to the bottom without scrolling */}
       <div className="shrink-0 mb-0 z-10 w-full p-2.5 sm:p-3 bg-window/95 border-t border-white/10 backdrop-blur-md shadow-2xl flex flex-col gap-1.5 sm:gap-2">
