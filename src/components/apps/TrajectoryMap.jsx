@@ -15,9 +15,9 @@ const MILESTONES = {
     coords: '37.26° N, 6.94° W',
     period: 'Foundations (Years 1-3)',
     color: 'purple',
-    positionClass: 'top-[44%] left-[47.5%]',
+    positionClass: 'top-[38%] left-[45.2%]',
     labelDirection: 'below',
-    svgPos: { x: 475, y: 440 },
+    svgPos: { x: 452, y: 380 },
   },
   nc: {
     id: 'nc',
@@ -32,9 +32,9 @@ const MILESTONES = {
     coords: '35.76° N, 79.02° W',
     period: 'Summer Work Experience',
     color: 'emerald',
-    positionClass: 'top-[40%] left-[26%]',
+    positionClass: 'top-[39.5%] left-[25.5%]',
     labelDirection: 'below',
-    svgPos: { x: 260, y: 400 },
+    svgPos: { x: 255, y: 395 },
   },
   stavanger: {
     id: 'stavanger',
@@ -49,9 +49,9 @@ const MILESTONES = {
     coords: '58.97° N, 5.73° E',
     period: 'Active Academic Term (Year 4)',
     color: 'cyan',
-    positionClass: 'top-[28%] left-[51%]',
+    positionClass: 'top-[17%] left-[48.5%]',
     labelDirection: 'above',
-    svgPos: { x: 510, y: 280 },
+    svgPos: { x: 485, y: 170 },
   },
 };
 
@@ -71,6 +71,20 @@ export default function TrajectoryMap({
   const [hoveredNode, setHoveredNode] = useState('stavanger');
 
   const activeInfo = MILESTONES[hoveredNode] || MILESTONES.stavanger;
+
+  const isMax = windowData?.isMaximized;
+
+  const dynamicCoords = {
+    huelva: isMax 
+      ? { class: 'top-[38%] left-[45.2%]', svg: { x: 452, y: 380 } } // MAX (Intacto)
+      : { class: 'top-[34%] left-[45.2%]', svg: { x: 452, y: 340 } }, // MIN (Arriba)
+    nc: isMax 
+      ? { class: 'top-[39.5%] left-[25%]', svg: { x: 250, y: 395 } } // MAX (Micro-ajuste a la izquierda)
+      : { class: 'top-[36%] left-[24%]', svg: { x: 240, y: 360 } },    // MIN (INTACTO)
+    stavanger: isMax 
+      ? { class: 'top-[17%] left-[48.5%]', svg: { x: 485, y: 170 } } // MAX (Intacto)
+      : { class: 'top-[15.5%] left-[49%]', svg: { x: 490, y: 155 } }, // MIN (Micro-arriba y Micro-derecha)
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden w-full absolute inset-0 bg-os font-mono select-none">
@@ -203,9 +217,9 @@ export default function TrajectoryMap({
           </g>
 
           {/* Precision Flight Arcs originating from Huelva */}
-          {/* Arc 1: Huelva (475, 440) -> North Carolina (260, 400) [Purple to Emerald] */}
+          {/* Ruta Huelva -> NC */}
           <path
-            d="M 475 440 Q 360 320 260 400"
+            d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 350 280 ${dynamicCoords.nc.svg.x} ${dynamicCoords.nc.svg.y}`}
             fill="none"
             stroke="url(#arcHuelvaToNC)"
             strokeWidth="2.5"
@@ -214,9 +228,9 @@ export default function TrajectoryMap({
             className="opacity-90"
           />
 
-          {/* Arc 2: Huelva (475, 440) -> Stavanger (510, 280) [Purple to Cyan] */}
+          {/* Ruta Huelva -> Stavanger */}
           <path
-            d="M 475 440 Q 500 350 510 280"
+            d={`M ${dynamicCoords.huelva.svg.x} ${dynamicCoords.huelva.svg.y} Q 465 270 ${dynamicCoords.stavanger.svg.x} ${dynamicCoords.stavanger.svg.y}`}
             fill="none"
             stroke="url(#arcHuelvaToStavanger)"
             strokeWidth="2.8"
@@ -230,7 +244,7 @@ export default function TrajectoryMap({
           return (
             <div
               key={node.id}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 z-30 ${node.positionClass}`}
+              className={`absolute -translate-x-1/2 -translate-y-1/2 z-30 ${dynamicCoords[node.id].class}`}
               onMouseEnter={() => setHoveredNode(node.id)}
               onMouseLeave={() => setHoveredNode('stavanger')}
             >
