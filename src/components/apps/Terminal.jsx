@@ -164,7 +164,8 @@ export default function Terminal({ onOpenApp, onClose }) {
   cat <file>   :: Output file contents or launch document
   open <name>  :: Launch application window (e.g. open resume, open map)
   cd <dir>     :: Change directory (~, projects, ..)
-  pwd          :: Print current working directory (/home/guest)
+  pwd          :: Print current working directory
+  contact      :: Launch mail client and display email address
   skills       :: Display technical stack and core competencies
   clear        :: Clear terminal screen history
   date         :: Display current system timestamp
@@ -246,6 +247,16 @@ drwxr-xr-x 2 guest guest 4.0K  projects/
         if (onOpenApp) onOpenApp('about');
         response =
           'Neizan Roggie - Aspiring Full-Stack Software Engineer (Spain, USA, Norway). [Window opened]';
+        break;
+
+      case 'contact':
+      case 'email':
+      case 'mail':
+        response =
+          '[ OK ] Launching default mail client... You can also reach me directly at: neizanroggie7@gmail.com';
+        if (typeof window !== 'undefined') {
+          window.location.href = 'mailto:neizanroggie7@gmail.com';
+        }
         break;
 
       case 'clear':
