@@ -1,21 +1,54 @@
-<<<<<<< HEAD
-# React + Vite
+# Neizan Roggie Martínez — Interactive Portfolio & OS
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+<p align="center">
+  <b>BSc Software Engineering Student & Full-Stack Developer</b><br>
+  Interactive browser-based desktop environment acting as a personal portfolio and system showcase.
+</p>
 
-Currently, two official plugins are available:
+<p align="center">
+  <a href="https://neizanroggie.com"><b>neizanroggie.com</b></a> &nbsp;&bull;&nbsp;
+  <a href="https://linkedin.com/in/neizan-roggie-martinez-60962b2a7/"><b>LinkedIn</b></a> &nbsp;&bull;&nbsp;
+  <a href="mailto:neizanroggie7@gmail.com"><b> Email</b></a>
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## About The Project
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is a fully interactive, web-based desktop environment built from scratch to serve as my personal portfolio. Designed to mimic a modern operating system interface directly inside the browser, it demonstrates advanced frontend state management, custom component architecture, and systems-level thinking applied to web development.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-=======
-# portfolio_neizanroggie
-this repository is meant to contain all the code and content related to my professional portfolio
->>>>>>> d05f3da3dee200ec7b32ce58e910e7d5157ba0af
+## Tech Stack
+
+* **Frontend Framework:** React, JavaScript (ES6+)
+* **Styling:** Tailwind CSS, Custom CSS Variables
+* **Architecture & State:** Custom Window Manager, Event Handling (Capture-phase)
+* **Graphics & UI:** SVG Components, Responsive Coordinate Mapping
+* **Versioning & Deployment:** Git, GitHub Pages
+
+---
+
+## Featured Projects & Architecture
+
+Inside the OS environment, visitors can explore core technical projects spanning systems programming, AI, and data science:
+
+1. **Synth-OS (Interactive Web Desktop Environment):** Custom OS simulation featuring a dynamic z-index window manager bypassing 32-bit limits and the interactive `TrajectoryMap` SVG component.
+2. **APP Phone Company (C++, OOP):** Object-oriented backend systems logic implementation for mobile telecommunication customer and billing management.
+3. **Alpha-Beta Tic Tac Toe (Python):** Adversarial search AI engine implementing the Minimax algorithm with Alpha-Beta pruning for optimal game-tree evaluation.
+4. **Greedy Algorithms Bar Tournament (Python / C++):** Algorithmic optimization solving bracket pairing, resource allocation, and match scheduling using greedy heuristics.
+5. **Numerical Modeling on Python:** Computational simulations and numerical methods for differential equations, complex data modeling, and mathematical analysis.
+
+---
+
+## Resume / CV
+
+You can view or download the latest official version of my curriculum vitae directly from the portfolio interface or access it via the direct static file route within the domain.
+
+---
+
+## Contact & Links
+
+* **Portfolio / Website:** [neizanroggie.com](https://neizanroggie.com)
+* **GitHub:** [taro-py](https://github.com/taro-py)
+* **Location:** Stavanger, Norway / Huelva, Spain
