@@ -196,10 +196,7 @@ export default function ResumeViewer({ onClose }) {
                 Summary
               </h2>
               <p className="text-xs sm:text-[13px] leading-relaxed text-slate-800 text-justify">
-                Aspiring FULL-STACK Software Engineer with a solid foundation in systems
-                development, algorithms, and Data. Currently undertaking a 4th-year
-                international exchange program at UiS, diving deep into advanced software
-                engineering, distributed systems, Numerical Modeling and robotics.
+                4th-year Software Engineering student currently on an exchange program at UiS, with a strong foundation in backend development, algorithms, and data modeling. Highly adaptable and fluent in Spanish and English, seeking a Summer 2027 Internship to apply my technical skills and continue growing in a real-world, agile environment.
               </p>
             </div>
 
@@ -222,7 +219,7 @@ export default function ResumeViewer({ onClose }) {
                     <span className="italic text-slate-700">
                       BSc Computer Engineering (Exchange)
                     </span>
-                    <span className="text-slate-800">2026 – 2027</span>
+                    <span className="text-slate-800">Aug 2026 – Jun 2027</span>
                   </div>
                 </div>
 
@@ -238,7 +235,7 @@ export default function ResumeViewer({ onClose }) {
                     <span className="italic text-slate-700">
                       BSc Computer Engineering
                     </span>
-                    <span className="text-slate-800">2023 – 2027</span>
+                    <span className="text-slate-800">Sep 2023 – Expected Graduation Jun 2028</span>
                   </div>
                 </div>
               </div>
@@ -268,19 +265,14 @@ export default function ResumeViewer({ onClose }) {
                   <ul className="mt-1 space-y-0.5 text-xs sm:text-[12.5px] text-slate-800 list-none pl-1">
                     <li className="flex items-start gap-1.5">
                       <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
-                      <span>Immersive professional experience in the US.</span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                       <span>
-                        Developed fluent English communication and high adaptability in demanding
-                        physical logistics and teamwork environments.
+                        Demonstrated high adaptability and cross-cultural teamwork in a fast-paced US environment, communicating fluently in English while managing logistical challenges.
                       </span>
                     </li>
                   </ul>
                 </div>
 
-                {/* Data Collector RWS */}
+                {/* Data Collector */}
                 <div>
                   <div className="flex justify-between items-baseline text-xs sm:text-[13px]">
                     <span className="font-bold text-slate-900">Data Collector</span>
@@ -293,14 +285,8 @@ export default function ResumeViewer({ onClose }) {
                   <ul className="mt-1 space-y-0.5 text-xs sm:text-[12.5px] text-slate-800 list-none pl-1">
                     <li className="flex items-start gap-1.5">
                       <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
-                      <span>I am registered as a data collector with RWS, fully remote.</span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                       <span>
-                        My role involves taking on short-term assignments (ranging from three days to a
-                        week) and performing tasks such as data analysis and AI training, as well as
-                        managing and optimizing user interfaces and web pages.
+                        Execute short-term data analysis and AI training assignments, contributing to the optimization of user interfaces in a fully remote, self-managed capacity.
                       </span>
                     </li>
                   </ul>
@@ -315,10 +301,10 @@ export default function ResumeViewer({ onClose }) {
               </h2>
 
               <div className="space-y-2.5">
-                {/* APP phone company */}
+                {/* Telecom Billing System Backend */}
                 <div>
                   <div className="font-bold text-slate-900 text-xs sm:text-[13px]">
-                    APP phone company
+                    Telecom Billing System Backend
                   </div>
                   <div className="italic text-slate-700 text-xs sm:text-[12.5px]">
                     Backend Developer (C++, OOP)
@@ -326,16 +312,15 @@ export default function ResumeViewer({ onClose }) {
                   <div className="mt-0.5 flex items-start gap-1.5 text-xs sm:text-[12.5px] text-slate-800 pl-1">
                     <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                     <span>
-                      Object-Oriented Programming and robust systems logic implementation for mobile
-                      telecommunication customer and billing management.
+                      Object-Oriented Programming and robust systems logic implementation for mobile telecommunication customer and billing management.
                     </span>
                   </div>
                 </div>
 
-                {/* Alpha Beta implementation tic tac toe */}
+                {/* Minimax AI Engine. */}
                 <div>
                   <div className="font-bold text-slate-900 text-xs sm:text-[13px]">
-                    Alpha Beta implementation tic tac toe
+                    Minimax AI Engine.
                   </div>
                   <div className="italic text-slate-700 text-xs sm:text-[12.5px]">
                     AI & Algorithms Developer (Python)
@@ -343,16 +328,15 @@ export default function ResumeViewer({ onClose }) {
                   <div className="mt-0.5 flex items-start gap-1.5 text-xs sm:text-[12.5px] text-slate-800 pl-1">
                     <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                     <span>
-                      Adversarial search AI engine implementing the Minimax algorithm with Alpha-Beta
-                      pruning for optimal game-tree evaluation.
+                      Adversarial search AI engine implementing the Minimax algorithm with Alpha-Beta pruning for optimal game-tree evaluation.
                     </span>
                   </div>
                 </div>
 
-                {/* Greedy algorithms implementation for bar tournament */}
+                {/* Tournament Optimization Algorithm */}
                 <div>
                   <div className="font-bold text-slate-900 text-xs sm:text-[13px]">
-                    Greedy algorithms implementation for bar tournament
+                    Tournament Optimization Algorithm
                   </div>
                   <div className="italic text-slate-700 text-xs sm:text-[12.5px]">
                     Algorithms Developer (Python / C++)
@@ -360,16 +344,15 @@ export default function ResumeViewer({ onClose }) {
                   <div className="mt-0.5 flex items-start gap-1.5 text-xs sm:text-[12.5px] text-slate-800 pl-1">
                     <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                     <span>
-                      Algorithmic optimization solving bracket pairing, resource allocation, and
-                      tournament match scheduling using greedy heuristics.
+                      Algorithmic optimization solving bracket pairing, resource allocation, and tournament match scheduling using greedy heuristics.
                     </span>
                   </div>
                 </div>
 
-                {/* Numerical-Modeling-on-Python */}
+                {/* Numerical Modeling on Python */}
                 <div>
                   <div className="font-bold text-slate-900 text-xs sm:text-[13px]">
-                    Numerical-Modeling-on-Python
+                    Numerical Modeling on Python
                   </div>
                   <div className="italic text-slate-700 text-xs sm:text-[12.5px]">
                     Data Science Developer (Python)
@@ -377,8 +360,7 @@ export default function ResumeViewer({ onClose }) {
                   <div className="mt-0.5 flex items-start gap-1.5 text-xs sm:text-[12.5px] text-slate-800 pl-1">
                     <span className="text-[10px] leading-relaxed text-slate-600 select-none">◦</span>
                     <span>
-                      Computational simulations and numerical methods for differential equations,
-                      complex data modeling, and mathematical analysis.
+                      Computational simulations and numerical methods for differential equations, complex data modeling, and mathematical analysis.
                     </span>
                   </div>
                 </div>

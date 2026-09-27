@@ -23,7 +23,7 @@ function GithubIcon({ className = "w-3.5 h-3.5" }) {
 const PROJECTS = [
   {
     id: 'app-phone-company',
-    title: 'APP phone company',
+    title: 'Telecom Billing System Backend',
     desc: 'Object-Oriented Programming and robust systems logic implementation for mobile telecommunication customer and billing management.',
     stack: ['C++', 'OOP', 'Backend'],
     githubUrl: 'https://github.com/taro-py/Practica2_MP',
@@ -31,7 +31,7 @@ const PROJECTS = [
   },
   {
     id: 'alpha-beta-tictactoe',
-    title: 'Alpha Beta implementation tic tac toe',
+    title: 'Minimax AI Engine',
     desc: 'Adversarial search AI engine implementing the Minimax algorithm with Alpha-Beta pruning for optimal game-tree evaluation.',
     stack: ['AI', 'Algorithms', 'MinMax'],
     githubUrl: 'https://github.com/taro-py/MinMax-Poda-Alfa-Beta',
@@ -39,7 +39,7 @@ const PROJECTS = [
   },
   {
     id: 'greedy-algorithms-tournament',
-    title: 'Greedy algorithms implementation for bar tournament',
+    title: 'Tournament Optimization Algorithm',
     desc: 'Algorithmic optimization solving bracket pairing, resource allocation, and tournament match scheduling using greedy heuristics.',
     stack: ['Algorithms', 'Data Structures', 'Logic'],
     githubUrl: 'https://github.com/taro-py/Algoritmos-Voraces',
@@ -47,7 +47,7 @@ const PROJECTS = [
   },
   {
     id: 'numerical-modeling-python',
-    title: 'Numerical-Modeling-on-Python',
+    title: 'Numerical Modeling on Python',
     desc: 'Computational simulations and numerical methods for differential equations, complex data modeling, and mathematical analysis.',
     stack: ['Python', 'Math Modeling', 'Data'],
     githubUrl: 'https://github.com/taro-py/Numerical-Modeling-on-Python',
